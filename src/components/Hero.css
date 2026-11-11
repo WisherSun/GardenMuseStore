@@ -1,0 +1,188 @@
+.hero-section {
+  padding-top: 8px;
+}
+
+.hero {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  min-height: clamp(440px, 118vw, 560px);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--color-green);
+  isolation: isolate;
+}
+
+.hero__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 60% 85%;
+  z-index: -2;
+}
+
+/* Darkens the bottom of the photo so white text stays readable */
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    180deg,
+    rgba(13, 40, 33, 0) 25%,
+    rgba(13, 40, 33, 0.45) 60%,
+    rgba(13, 40, 33, 0.8) 100%
+  );
+}
+
+.hero__content {
+  width: 100%;
+  padding: 24px;
+}
+
+.hero__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #f4d9cb;
+}
+
+.hero__label::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-peach);
+}
+
+.hero__title {
+  margin: 10px 0 24px;
+  font-size: clamp(28px, 8vw, 64px);
+  line-height: 1.2;
+  color: #fff;
+}
+
+.hero__break {
+  display: none;
+}
+
+.hero__actions {
+  display: grid;
+  gap: 12px;
+}
+
+/* ---------- Highlight chips ---------- */
+.highlights {
+  display: flex;
+  gap: 10px;
+  margin: 16px calc(var(--gutter) * -1) 0;
+  padding-inline: var(--gutter);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+}
+
+.highlight {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: #f5f2ed;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-ink);
+  white-space: nowrap;
+  scroll-snap-align: start;
+}
+
+.highlight__icon {
+  width: 16px;
+  height: 16px;
+}
+
+.highlight__icon--rust {
+  color: var(--color-rust);
+}
+
+.highlight__icon--green {
+  color: var(--color-green);
+}
+
+/* ---------- Tablet ---------- */
+@media (min-width: 640px) {
+  .hero {
+    min-height: 520px;
+  }
+
+  .hero__content {
+    padding: 40px;
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .highlights {
+    justify-content: center;
+    margin-inline: 0;
+    padding-inline: 0;
+    overflow: visible;
+  }
+}
+
+/* ---------- Desktop ---------- */
+@media (min-width: 1024px) {
+  .hero-section {
+    padding-top: 24px;
+  }
+
+  .hero {
+    min-height: min(76vh, 680px);
+    border-radius: var(--radius-lg);
+  }
+
+  .hero::after {
+    background: linear-gradient(
+      90deg,
+      rgba(13, 40, 33, 0.78) 0%,
+      rgba(13, 40, 33, 0.45) 45%,
+      rgba(13, 40, 33, 0) 75%
+    );
+  }
+
+  .hero__content {
+    max-width: 880px;
+    padding: 64px;
+  }
+
+  .hero__label {
+    font-size: 12px;
+  }
+
+  .hero__title {
+    margin-bottom: 36px;
+  }
+
+  .hero__break {
+    display: inline;
+  }
+
+  .highlights {
+    gap: 16px;
+    margin-top: 24px;
+  }
+
+  .highlight {
+    padding: 10px 18px;
+    font-size: 13px;
+  }
+}
