@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import "./Footer.css";
 
 export default function Footer() {
@@ -8,9 +9,9 @@ export default function Footer() {
       <div className="container">
         <div className="footer__grid">
           <div className="footer__brand">
-            <a href="#top" className="footer__logo">
+            <Link to="/" className="footer__logo">
               Garden Muse
-            </a>
+            </Link>
             <p className="footer__about">
               Artisanal floral design atelier &amp; botanical studio. Cultivating natural elegance,
               wild arrangements, and botanical sculptures.

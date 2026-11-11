@@ -1,17 +1,22 @@
 import { useEffect, useState } from "react";
-import { BagIcon, CloseIcon, HeartIcon, MenuIcon, SearchIcon } from "./Icons.jsx";
+import { Link } from "react-router";
+import { useAuth } from "../hooks/useAuth.js";
+import { BagIcon, CloseIcon, HeartIcon, MenuIcon, SearchIcon, UserIcon } from "./Icons.jsx";
 import "./Header.css";
 
+// "/#section" links work from any page: they open Home and scroll to that section.
 const navLinks = [
-  { label: "Shop", href: "#botanicals" },
-  { label: "Arrangements", href: "#arrangements" },
-  { label: "Subscriptions", href: "#subscription" },
-  { label: "Our Craft", href: "#craft" },
-  { label: "Journal", href: "#journal" },
+  { label: "Shop", to: "/#botanicals" },
+  { label: "Arrangements", to: "/#arrangements" },
+  { label: "Subscriptions", to: "/#subscription" },
+  { label: "Our Craft", to: "/#craft" },
+  { label: "Journal", to: "/#journal" },
 ];
 
 export default function Header({ cartCount }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { user } = useAuth();
+  const accountLink = user ? "/account" : "/login";
 
   // While the mobile menu is open: lock page scroll and close it with Escape.
   useEffect(() => {
@@ -40,15 +45,15 @@ export default function Header({ cartCount }) {
           <MenuIcon />
         </button>
 
-        <a href="#top" className="header__logo">
+        <Link to="/" className="header__logo">
           Garden Muse
-        </a>
+        </Link>
 
         <nav className="header__nav" aria-label="Main">
           {navLinks.map((link) => (
-            <a key={link.href} href={link.href}>
+            <Link key={link.to} to={link.to}>
               {link.label}
-            </a>
+            </Link>
           ))}
         </nav>
 
@@ -56,17 +61,25 @@ export default function Header({ cartCount }) {
           <button className="header__icon-btn" aria-label="Search">
             <SearchIcon />
           </button>
-          <a href="#saved" className="header__icon-btn header__saved" aria-label="Saved items">
+          <Link to="/#saved" className="header__icon-btn header__desktop-only" aria-label="Saved items">
             <HeartIcon />
-          </a>
-          <a
-            href="#cart"
+          </Link>
+          <Link
+            to={accountLink}
+            className="header__icon-btn header__desktop-only"
+            aria-label={user ? "My account" : "Sign in"}
+          >
+            <UserIcon />
+            {user && <span className="header__dot" aria-hidden="true" />}
+          </Link>
+          <Link
+            to="/#cart"
             className="header__icon-btn header__cart"
             aria-label={`Cart, ${cartCount} ${cartCount === 1 ? "item" : "items"}`}
           >
             <BagIcon />
             {cartCount > 0 && <span className="header__badge">{cartCount}</span>}
-          </a>
+          </Link>
         </div>
       </div>
 
@@ -87,11 +100,15 @@ export default function Header({ cartCount }) {
           </div>
           <nav aria-label="Mobile">
             {navLinks.map((link) => (
-              <a key={link.href} href={link.href} onClick={closeMenu} className="mobile-menu__link">
+              <Link key={link.to} to={link.to} onClick={closeMenu} className="mobile-menu__link">
                 {link.label}
-              </a>
+              </Link>
             ))}
           </nav>
+          <Link to={accountLink} onClick={closeMenu} className="mobile-menu__account">
+            <UserIcon />
+            {user ? "My account" : "Sign in / Create account"}
+          </Link>
           <p className="mobile-menu__note">Same-day courier in London &amp; NYC</p>
         </div>
       </div>

@@ -73,9 +73,21 @@
   text-align: center;
 }
 
+/* Small green dot on the account icon when logged in */
+.header__dot {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  border: 2px solid var(--color-bg);
+  border-radius: 50%;
+  background: #3f8f6b;
+}
+
 /* Desktop-only parts are hidden on small screens */
 .header__nav,
-.header__saved {
+.header__desktop-only {
   display: none;
 }
 
@@ -129,7 +141,7 @@
     transform: scaleX(1);
   }
 
-  .header__saved {
+  .header__desktop-only {
     display: inline-grid;
   }
 }
@@ -191,6 +203,22 @@
   font-family: var(--font-serif);
   font-size: 26px;
   color: var(--color-ink);
+}
+
+.mobile-menu__account {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 24px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--color-ink);
+}
+
+.mobile-menu__account svg {
+  width: 20px;
+  height: 20px;
 }
 
 .mobile-menu__note {

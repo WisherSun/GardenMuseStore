@@ -1,21 +1,32 @@
-import { BagIcon, FlowerIcon, HeartIcon, SearchIcon } from "./Icons.jsx";
+import { Link, useLocation } from "react-router";
+import { useAuth } from "../hooks/useAuth.js";
+import { BagIcon, FlowerIcon, HeartIcon, UserIcon } from "./Icons.jsx";
 import "./BottomNav.css";
 
 // Phone/tablet-only navigation bar fixed to the bottom of the screen.
 export default function BottomNav({ cartCount }) {
+  const { pathname } = useLocation();
+  const { user } = useAuth();
+  const accountPaths = ["/login", "/signup", "/account", "/forgot-password", "/reset-password"];
+
   const items = [
-    { label: "Atelier", href: "#top", Icon: FlowerIcon, active: true },
-    { label: "Botanicals", href: "#botanicals", Icon: SearchIcon },
-    { label: "Saved", href: "#saved", Icon: HeartIcon },
-    { label: "Cart", href: "#cart", Icon: BagIcon, count: cartCount },
+    { label: "Atelier", to: "/", Icon: FlowerIcon, active: pathname === "/" },
+    { label: "Saved", to: "/#saved", Icon: HeartIcon },
+    {
+      label: user ? "Account" : "Sign in",
+      to: user ? "/account" : "/login",
+      Icon: UserIcon,
+      active: accountPaths.includes(pathname),
+    },
+    { label: "Cart", to: "/#cart", Icon: BagIcon, count: cartCount },
   ];
 
   return (
     <nav className="bottom-nav" aria-label="Quick navigation">
-      {items.map(({ label, href, Icon, active, count }) => (
-        <a
+      {items.map(({ label, to, Icon, active, count }) => (
+        <Link
           key={label}
-          href={href}
+          to={to}
           className={`bottom-nav__item ${active ? "is-active" : ""}`}
           aria-current={active ? "page" : undefined}
         >
@@ -24,7 +35,7 @@ export default function BottomNav({ cartCount }) {
             {count > 0 && <span className="bottom-nav__badge">{count}</span>}
           </span>
           {label}
-        </a>
+        </Link>
       ))}
     </nav>
   );
