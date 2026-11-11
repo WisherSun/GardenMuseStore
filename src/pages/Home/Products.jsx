@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { categories } from "../data/categories.js";
-import { useFlowers } from "../hooks/useFlowers.js";
-import { ArrowRightIcon, CheckIcon, PlusIcon } from "./Icons.jsx";
+import { categories } from "./categories.js";
+import { useFlowers } from "../../hooks/useFlowers.js";
+import { ArrowRightIcon, CheckIcon, PlusIcon } from "../../components/Icons.jsx";
 import "./Products.css";
 
 const HOME_PRODUCT_COUNT = 4;

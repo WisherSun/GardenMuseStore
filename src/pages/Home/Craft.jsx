@@ -1,6 +1,6 @@
-import studioImage from "../assets/placeholders/studio.jpg";
-import bouquetImage from "../assets/placeholders/bouquet.jpg";
-import { StarIcon } from "./Icons.jsx";
+import studioImage from "../../assets/placeholders/studio.jpg";
+import bouquetImage from "../../assets/placeholders/bouquet.jpg";
+import { StarIcon } from "../../components/Icons.jsx";
 import "./Craft.css";
 
 export default function Craft() {

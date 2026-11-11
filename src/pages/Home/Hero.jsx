@@ -1,5 +1,5 @@
-import heroImage from "../assets/placeholders/hero.jpg";
-import { LeafIcon, TruckIcon } from "./Icons.jsx";
+import heroImage from "../../assets/placeholders/hero.jpg";
+import { LeafIcon, TruckIcon } from "../../components/Icons.jsx";
 import "./Hero.css";
 
 export default function Hero() {

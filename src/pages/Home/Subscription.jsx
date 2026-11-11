@@ -1,4 +1,4 @@
-import { CalendarIcon, CheckCircleIcon } from "./Icons.jsx";
+import { CalendarIcon, CheckCircleIcon } from "../../components/Icons.jsx";
 import "./Subscription.css";
 
 export default function Subscription() {

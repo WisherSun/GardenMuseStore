@@ -1,8 +1,8 @@
 import { Link, Navigate, useLocation, useNavigate } from "react-router";
-import { useAuth } from "../hooks/useAuth.js";
-import AuthLayout from "./auth/AuthLayout.jsx";
-import { FormAlert } from "./auth/AuthFields.jsx";
-import styles from "./auth/Auth.module.css";
+import { useAuth } from "../../hooks/useAuth.js";
+import AuthLayout from "../Auth/AuthLayout.jsx";
+import { FormAlert } from "../Auth/AuthFields.jsx";
+import styles from "../Auth/Auth.module.css";
 
 // Simple account page. Only for logged-in users; others are sent to /login.
 export default function AccountPage() {
