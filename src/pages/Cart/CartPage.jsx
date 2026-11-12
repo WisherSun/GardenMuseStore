@@ -3,7 +3,7 @@ import { Link } from "react-router";
 import { useCart } from "../../hooks/useCart.js";
 import { fetchFlowersByIds } from "../../api/flowers.js";
 import { formatPrice } from "../../lib/format.js";
-import { BagIcon, CloseIcon } from "../../components/Icons.jsx";
+import { BagIcon, CheckCircleIcon, CloseIcon } from "../../components/Icons.jsx";
 import "./Cart.css";
 
 const MAX_QUANTITY = 99;
@@ -133,9 +133,51 @@ function CartItemSkeleton() {
   );
 }
 
+// Turns the database error into something a customer can read.
+function orderErrorMessage(err) {
+  const message = err?.message ?? "";
+  if (message.includes("basket is empty")) return "Your basket is empty.";
+  if (message.includes("sign in")) return "Please sign in to place an order.";
+  return "We couldn’t place your order. Please try again.";
+}
+
+function OrderPlaced({ orderId }) {
+  return (
+    <div className="cart-empty order-placed" role="status">
+      <span className="cart-empty__icon order-placed__icon">
+        <CheckCircleIcon />
+      </span>
+      <h2 className="cart-empty__title">Thank you for your order!</h2>
+      <p>
+        Your order <strong>#{orderId}</strong> has been placed. We’ll be in touch about delivery.
+      </p>
+      <Link to="/shop" className="btn btn--ink">
+        Continue shopping
+      </Link>
+    </div>
+  );
+}
+
 export default function CartPage() {
-  const { lines, status, error, isGuest, setQuantity, remove, clear, dismissError } = useCart();
+  const { lines, status, error, isGuest, setQuantity, remove, clear, checkout, dismissError } = useCart();
   const { products, loading, failed, retry } = useBasketProducts(lines, remove);
+
+  const [placing, setPlacing] = useState(false);
+  const [orderError, setOrderError] = useState(null);
+  const [placedOrderId, setPlacedOrderId] = useState(null);
+
+  const handlePlaceOrder = async () => {
+    setPlacing(true);
+    setOrderError(null);
+    try {
+      setPlacedOrderId(await checkout());
+    } catch (err) {
+      console.error("Could not place the order:", err);
+      setOrderError(orderErrorMessage(err));
+    } finally {
+      setPlacing(false);
+    }
+  };
 
   const items = lines
     .map((line) => ({ ...line, product: products[line.flowerId] }))
@@ -167,7 +209,9 @@ export default function CartPage() {
           </div>
         )}
 
-        {showSkeleton ? (
+        {placedOrderId ? (
+          <OrderPlaced orderId={placedOrderId} />
+        ) : showSkeleton ? (
           <ul className="cart-list" aria-busy="true" aria-label="Loading basket">
             {Array.from({ length: Math.max(lines.length, 2) }, (_, i) => (
               <CartItemSkeleton key={i} />
@@ -238,18 +282,32 @@ export default function CartPage() {
                 </div>
               </dl>
 
-              <button className="btn btn--rust btn--block" disabled>
-                Checkout
-              </button>
-              <p className="cart-summary__note">Online checkout is coming soon.</p>
-
-              {isGuest && (
-                <p className="cart-summary__guest">
-                  <Link to="/login" state={{ from: "/cart" }}>
-                    Sign in
-                  </Link>{" "}
-                  to keep your basket on all your devices.
-                </p>
+              {isGuest ? (
+                <>
+                  <Link to="/login" state={{ from: "/cart" }} className="btn btn--rust btn--block">
+                    Sign in to order
+                  </Link>
+                  <p className="cart-summary__note">
+                    Your basket is kept and moves to your account when you sign in.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <button
+                    className="btn btn--rust btn--block"
+                    onClick={handlePlaceOrder}
+                    disabled={placing || loading}
+                    aria-busy={placing}
+                  >
+                    {placing ? "Placing order…" : "Place order"}
+                  </button>
+                  {orderError && (
+                    <p className="cart-summary__error" role="alert">
+                      {orderError}
+                    </p>
+                  )}
+                  <p className="cart-summary__note">Payment on delivery.</p>
+                </>
               )}
             </aside>
           </div>

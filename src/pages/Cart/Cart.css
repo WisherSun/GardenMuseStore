@@ -247,6 +247,13 @@
   cursor: not-allowed;
 }
 
+.cart-summary__error {
+  margin-top: 10px;
+  font-size: 13px;
+  text-align: center;
+  color: var(--color-rust);
+}
+
 .cart-summary__note,
 .cart-summary__guest {
   margin-top: 10px;
@@ -294,6 +301,17 @@
 
 .cart-empty .btn {
   margin-top: 8px;
+}
+
+/* ---------- Order placed ---------- */
+.order-placed {
+  border-style: solid;
+  background: var(--color-surface-soft);
+}
+
+.order-placed__icon {
+  background: var(--color-green);
+  color: #fff;
 }
 
 /* ---------- Desktop ---------- */

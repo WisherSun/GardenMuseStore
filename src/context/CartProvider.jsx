@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useAuth } from "../hooks/useAuth.js";
 import { clearCartLines, deleteCartLine, fetchCartLines, saveCartLines } from "../api/cart.js";
+import { placeOrder } from "../api/orders.js";
 import { CartContext } from "./cart-context.js";
 
 // Where a guest's basket is kept until they sign in.
@@ -60,6 +61,14 @@ export default function CartProvider({ children }) {
   const linesRef = useRef(lines);
   // The basket request in progress, so React's double effect run in dev doesn't merge twice.
   const loadingRef = useRef(null);
+  // Basket saves still on their way to the database (checkout waits for them).
+  const pendingRef = useRef(new Set());
+
+  const track = useCallback((request) => {
+    pendingRef.current.add(request);
+    request.finally(() => pendingRef.current.delete(request)).catch(() => {});
+    return request;
+  }, []);
 
   const show = useCallback((next) => {
     linesRef.current = next;
@@ -123,7 +132,9 @@ export default function CartProvider({ children }) {
         return;
       }
 
-      const request = qty === 0 ? deleteCartLine(userId, flowerId) : saveCartLines(userId, [{ flowerId, quantity: qty }]);
+      const request = track(
+        qty === 0 ? deleteCartLine(userId, flowerId) : saveCartLines(userId, [{ flowerId, quantity: qty }]),
+      );
       request.catch((err) => {
         console.error("Could not save the basket:", err);
         setError("We couldn’t save your basket. Please try again.");
@@ -131,7 +142,7 @@ export default function CartProvider({ children }) {
         fetchCartLines(userId).then(show).catch(() => {});
       });
     },
-    [userId, show],
+    [userId, show, track],
   );
 
   const add = useCallback(
@@ -150,11 +161,21 @@ export default function CartProvider({ children }) {
       writeGuestCart([]);
       return;
     }
-    clearCartLines(userId).catch((err) => {
+    track(clearCartLines(userId)).catch((err) => {
       console.error("Could not clear the basket:", err);
       setError("We couldn’t clear your basket. Please try again.");
       fetchCartLines(userId).then(show).catch(() => {});
     });
+  }, [userId, show, track]);
+
+  // Turns the saved basket into an order. Returns the new order id; throws if it fails
+  // (the basket is then left as it was).
+  const checkout = useCallback(async () => {
+    if (!userId) throw new Error("Please sign in to place an order");
+    await Promise.allSettled([...pendingRef.current]);
+    const orderId = await placeOrder();
+    show([]); // the database emptied the basket
+    return orderId;
   }, [userId, show]);
 
   // "loading" while a signed-in user's saved basket is on its way
@@ -171,9 +192,10 @@ export default function CartProvider({ children }) {
       setQuantity,
       remove,
       clear,
+      checkout,
       dismissError: () => setError(null),
     }),
-    [lines, status, error, userId, add, setQuantity, remove, clear],
+    [lines, status, error, userId, add, setQuantity, remove, clear, checkout],
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
