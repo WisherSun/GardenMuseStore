@@ -1,69 +1,55 @@
-import { useState } from "react";
 import "./Newsletter.css";
 
+const tips = [
+  {
+    title: "Trim the stems",
+    text: "Cut 2 cm off each stem at an angle before placing them in water.",
+  },
+  {
+    title: "Fresh water every two days",
+    text: "Change the water and rinse the vase to keep bacteria away.",
+  },
+  {
+    title: "Remove low leaves",
+    text: "No leaves below the waterline; they rot and shorten vase life.",
+  },
+  {
+    title: "Keep them cool",
+    text: "Away from direct sun, radiators and ripening fruit.",
+  },
+];
+
+// Flower care tips. Information only, no form or button.
+// (File keeps its old name; the section used to be a newsletter sign-up.)
 export default function Newsletter() {
-  const [email, setEmail] = useState("");
-  const [status, setStatus] = useState("idle"); // "idle" | "error" | "success"
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
-    if (!isValid) {
-      setStatus("error");
-      return;
-    }
-    // TODO: send the email to the backend once the newsletter API exists.
-    setStatus("success");
-    setEmail("");
-  };
-
   return (
-    <section className="section newsletter-section" id="journal">
+    <section className="section newsletter-section" id="care" aria-labelledby="care-title">
       <div className="container">
         <div className="newsletter">
           <div className="newsletter__text">
-            <span className="eyebrow">The Journal</span>
-            <h2 className="newsletter__title">Enter the Greenhouse</h2>
+            <span className="eyebrow">Flower care</span>
+            <h2 id="care-title" className="newsletter__title">
+              Make Your Bouquet Last
+            </h2>
             <p className="newsletter__desc">
-              Receive 10% off your inaugural bouquet, private invitations to secret floral
-              harvests, and seasonal botanical notes.
+              A little care goes a long way. Follow these simple steps and your flowers will
+              stay fresh and beautiful for days longer.
             </p>
           </div>
 
-          {status === "success" ? (
-            <p className="newsletter__success" role="status">
-              Welcome to the circle. Your 10% code is on its way to your inbox.
-            </p>
-          ) : (
-            <form className="newsletter__form" onSubmit={handleSubmit} noValidate>
-              <label htmlFor="newsletter-email" className="visually-hidden">
-                Email address
-              </label>
-              <input
-                id="newsletter-email"
-                type="email"
-                inputMode="email"
-                autoComplete="email"
-                placeholder="Your email address"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  if (status === "error") setStatus("idle");
-                }}
-                aria-invalid={status === "error"}
-                aria-describedby={status === "error" ? "newsletter-error" : undefined}
-                className="newsletter__input"
-              />
-              <button type="submit" className="btn btn--ink">
-                Join the Circle
-              </button>
-              {status === "error" && (
-                <p id="newsletter-error" className="newsletter__error" role="alert">
-                  Please enter a valid email address.
-                </p>
-              )}
-            </form>
-          )}
+          <ol className="care-tips">
+            {tips.map((tip, i) => (
+              <li key={tip.title} className="care-tip">
+                <span className="care-tip__number" aria-hidden="true">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <div>
+                  <h3 className="care-tip__title">{tip.title}</h3>
+                  <p className="care-tip__text">{tip.text}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
         </div>
       </div>
     </section>

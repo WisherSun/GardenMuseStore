@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useSearchParams } from "react-router";
 import { useFlowers } from "../../hooks/useFlowers.js";
 import { SearchIcon } from "../../components/Icons.jsx";
 import ProductCard, { ProductCardSkeleton } from "../../components/ProductCard.jsx";
@@ -33,7 +34,9 @@ export default function ShopPage() {
   // The catalog is small, so we load it once and filter/sort in the browser.
   const { status, flowers, retry } = useFlowers();
 
-  const [search, setSearch] = useState("");
+  // "/shop?search=peony" (e.g. from the Home page search) starts with that search filled in
+  const [params] = useSearchParams();
+  const [search, setSearch] = useState(() => params.get("search") ?? "");
   const [saleFilter, setSaleFilter] = useState("all");
   const [sort, setSort] = useState("name-asc");
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);

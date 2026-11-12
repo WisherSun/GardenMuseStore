@@ -11,7 +11,7 @@ const navLinks = [
   { label: "Arrangements", to: "/#arrangements" },
   { label: "Bespoke", to: "/#bespoke" },
   { label: "Our Craft", to: "/#craft" },
-  { label: "Journal", to: "/#journal" },
+  { label: "Flower Care", to: "/#care" },
 ];
 
 export default function Header() {
