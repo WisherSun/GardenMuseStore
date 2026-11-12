@@ -38,9 +38,10 @@
   line-height: 1.65;
 }
 
+/* Phones: one feature per line */
 .subscription__features {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 12px;
   margin-bottom: 20px;
   padding: 14px;
@@ -62,6 +63,13 @@
   width: 18px;
   height: 18px;
   color: var(--color-sage);
+}
+
+/* Tablets: the two features side by side */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .subscription__features {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 @media (min-width: 1024px) {

@@ -1,10 +1,18 @@
 /* Product card, grid, loading skeletons and empty/error message.
    Shared by the Home page and the Shop page. */
 
+/* Phones: one card under another. Tablets: 2 per row. Desktop: 4 per row. */
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+}
+
+@media (min-width: 640px) {
+  .product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
 }
 
 /* ---------- Product card ---------- */
@@ -19,10 +27,6 @@
   transition: transform 0.25s, box-shadow 0.25s;
 }
 
-.product-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 2px 4px rgba(13, 40, 33, 0.05), 0 16px 32px rgba(13, 40, 33, 0.08);
-}
 
 .product-card__media {
   position: relative;
@@ -39,8 +43,17 @@
   transition: transform 0.5s;
 }
 
-.product-card:hover .product-card__media img {
-  transform: scale(1.04);
+/* Lift + photo zoom only on devices with a real mouse.
+   On phones a tap counts as "hover" and the zoom would get stuck. */
+@media (hover: hover) and (pointer: fine) {
+  .product-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 2px 4px rgba(13, 40, 33, 0.05), 0 16px 32px rgba(13, 40, 33, 0.08);
+  }
+
+  .product-card:hover .product-card__media img {
+    transform: scale(1.04);
+  }
 }
 
 .product-card__badge {

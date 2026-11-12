@@ -10,14 +10,9 @@
   }
 }
 
-.footer__grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 28px 20px;
-}
-
-.footer__brand {
-  grid-column: 1 / -1;
+/* Phones: plain blocks, one under another */
+.footer__grid > * + * {
+  margin-top: 28px;
 }
 
 .footer__logo {
@@ -37,9 +32,6 @@
 }
 
 .footer__col {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
   min-width: 0;
 }
 
@@ -66,6 +58,9 @@
 }
 
 .footer__link {
+  display: block;
+  width: fit-content;
+  padding-block: 2px;
   overflow-wrap: break-word;
   color: var(--color-text);
   transition: color 0.2s;
@@ -76,11 +71,6 @@
 }
 
 .footer__bottom {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px 20px;
   margin-top: 28px;
   padding-top: 20px;
   border-top: 1px solid var(--color-border);
@@ -89,8 +79,40 @@
 }
 
 .footer__legal {
-  display: flex;
-  gap: 16px;
+  margin-top: 8px;
+}
+
+.footer__legal a + a {
+  margin-left: 16px;
+}
+
+/* Tablets: brand on top, the two contact columns side by side */
+@media (min-width: 640px) {
+  .footer__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px 20px;
+  }
+
+  .footer__grid > * + * {
+    margin-top: 0;
+  }
+
+  .footer__brand {
+    grid-column: 1 / -1;
+  }
+
+  .footer__bottom {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 20px;
+  }
+
+  .footer__legal {
+    margin-top: 0;
+  }
 }
 
 .footer__legal a:hover {

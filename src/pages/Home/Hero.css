@@ -35,12 +35,8 @@
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: linear-gradient(
-    180deg,
-    rgba(13, 40, 33, 0) 25%,
-    rgba(13, 40, 33, 0.45) 60%,
-    rgba(13, 40, 33, 0.8) 100%
-  );
+  /* Phones: even dark-green tint over the whole photo (no gradient) */
+  background: rgba(13, 40, 33, 0.5);
 }
 
 .hero__content {
@@ -85,6 +81,16 @@
 
 /* ---------- Tablet ---------- */
 @media (min-width: 640px) {
+  /* Tablets: fade to dark at the bottom, behind the text */
+  .hero::after {
+    background: linear-gradient(
+      180deg,
+      rgba(13, 40, 33, 0) 25%,
+      rgba(13, 40, 33, 0.45) 60%,
+      rgba(13, 40, 33, 0.8) 100%
+    );
+  }
+
   .hero {
     min-height: 520px;
   }
@@ -110,6 +116,7 @@
     border-radius: var(--radius-lg);
   }
 
+  /* Desktop: dark on the left behind the text, clear on the right over the bouquet */
   .hero::after {
     background: linear-gradient(
       90deg,

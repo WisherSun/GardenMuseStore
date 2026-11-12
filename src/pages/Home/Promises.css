@@ -3,19 +3,29 @@
   padding-top: 24px;
 }
 
-/* Flex + wrap + center: works for any number of cards, and a card left
-   alone on the last row sits in the middle instead of on the left. */
-.promises__list {
-  --promise-gap: 12px;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--promise-gap);
+/* Phones: plain list, one card under another. */
+.promises__list > .promise + .promise {
+  margin-top: 12px;
 }
 
-/* 2 cards per row on phones */
-.promises__list > .promise {
-  flex: 0 1 calc((100% - var(--promise-gap)) / 2);
+/* Tablets: 2 per row. Flex + wrap + center, so a card left alone
+   on the last row sits in the middle instead of on the left. */
+@media (min-width: 640px) {
+  .promises__list {
+    --promise-gap: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--promise-gap);
+  }
+
+  .promises__list > .promise {
+    flex: 0 1 calc((100% - var(--promise-gap)) / 2);
+  }
+
+  .promises__list > .promise + .promise {
+    margin-top: 0;
+  }
 }
 
 /* Row 1: icon + title side by side. Row 2: text across the full width. */
