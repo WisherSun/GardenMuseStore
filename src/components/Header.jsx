@@ -17,7 +17,7 @@ const navLinks = [
 export default function Header() {
   const { count: cartCount } = useCart();
   const [menuOpen, setMenuOpen] = useState(false);
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const accountLink = user ? "/account" : "/login";
 
   // While the mobile menu is open: lock page scroll and close it with Escape.
@@ -57,6 +57,7 @@ export default function Header() {
               {link.label}
             </Link>
           ))}
+          {isAdmin && <Link to="/admin">Admin</Link>}
         </nav>
 
         <div className="header__actions">
@@ -106,6 +107,11 @@ export default function Header() {
                 {link.label}
               </Link>
             ))}
+            {isAdmin && (
+              <Link to="/admin" onClick={closeMenu} className="mobile-menu__link">
+                Admin
+              </Link>
+            )}
           </nav>
           <Link to={accountLink} onClick={closeMenu} className="mobile-menu__account">
             <UserIcon />

@@ -6,7 +6,7 @@ import styles from "../Auth/Auth.module.css";
 
 // Simple account page. Only for logged-in users; others are sent to /login.
 export default function AccountPage() {
-  const { user, loading, signOut } = useAuth();
+  const { user, loading, isAdmin, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -52,6 +52,11 @@ export default function AccountPage() {
       </div>
 
       <div className={styles.actions}>
+        {isAdmin && (
+          <Link to="/admin" className="btn btn--rust">
+            Admin panel
+          </Link>
+        )}
         <Link to="/" className="btn btn--ink">
           Continue shopping
         </Link>

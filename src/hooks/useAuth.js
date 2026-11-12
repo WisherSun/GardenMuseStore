@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { AuthContext } from "../context/auth-context.js";
 
-// Use in any component: const { user, loading, signOut } = useAuth();
+// Use in any component: const { user, loading, isAdmin, signOut } = useAuth();
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) throw new Error("useAuth must be used inside <AuthProvider>");

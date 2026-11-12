@@ -11,6 +11,7 @@ import SignUpPage from "./pages/Auth/SignUpPage.jsx";
 import ForgotPasswordPage from "./pages/Auth/ForgotPasswordPage.jsx";
 import ResetPasswordPage from "./pages/Auth/ResetPasswordPage.jsx";
 import AccountPage from "./pages/Account/AccountPage.jsx";
+import AdminPage from "./pages/Admin/AdminPage.jsx";
 import NotFoundPage from "./pages/NotFound/NotFoundPage.jsx";
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/account" element={<AccountPage />} />
+          <Route path="/admin" element={<AdminPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
