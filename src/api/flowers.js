@@ -25,3 +25,13 @@ export async function fetchFlowers({ limit } = {}) {
   if (error) throw error;
   return data.map(toProduct);
 }
+
+// Loads only the given flowers (used by the basket page).
+export async function fetchFlowersByIds(ids) {
+  if (!supabase) throw new Error("Supabase is not configured");
+  if (ids.length === 0) return [];
+
+  const { data, error } = await supabase.from("Flowers").select("*").in("id", ids);
+  if (error) throw error;
+  return data.map(toProduct);
+}

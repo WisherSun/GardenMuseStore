@@ -1,10 +1,11 @@
-import { useState } from "react";
 import { Route, Routes } from "react-router";
 import Header from "./components/Header.jsx";
 import Footer from "./components/Footer.jsx";
 import BottomNav from "./components/BottomNav.jsx";
 import ScrollManager from "./components/ScrollManager.jsx";
 import HomePage from "./pages/Home/HomePage.jsx";
+import ShopPage from "./pages/Shop/ShopPage.jsx";
+import CartPage from "./pages/Cart/CartPage.jsx";
 import LoginPage from "./pages/Auth/LoginPage.jsx";
 import SignUpPage from "./pages/Auth/SignUpPage.jsx";
 import ForgotPasswordPage from "./pages/Auth/ForgotPasswordPage.jsx";
@@ -13,17 +14,15 @@ import AccountPage from "./pages/Account/AccountPage.jsx";
 import NotFoundPage from "./pages/NotFound/NotFoundPage.jsx";
 
 function App() {
-  // Simple cart counter for now. Later this can become a real cart (list of items, totals).
-  const [cartCount, setCartCount] = useState(0);
-  const addToCart = () => setCartCount((count) => count + 1);
-
   return (
     <>
       <ScrollManager />
-      <Header cartCount={cartCount} />
+      <Header />
       <main>
         <Routes>
-          <Route path="/" element={<HomePage onAddToCart={addToCart} />} />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/shop" element={<ShopPage />} />
+          <Route path="/cart" element={<CartPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
@@ -33,7 +32,7 @@ function App() {
         </Routes>
       </main>
       <Footer />
-      <BottomNav cartCount={cartCount} />
+      <BottomNav />
     </>
   );
 }

@@ -46,7 +46,7 @@ export default function LoginPage() {
     <AuthLayout
       eyebrow="Welcome back"
       title="Sign in"
-      subtitle="Sign in to track your orders, manage your subscription and save favourite arrangements."
+      subtitle="Sign in to track your orders and save favourite arrangements."
       footer={
         <>
           New to Garden Muse? <Link to="/signup">Create an account</Link>

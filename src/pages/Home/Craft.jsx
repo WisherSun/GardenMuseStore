@@ -19,12 +19,12 @@ export default function Craft() {
           <div className="craft__images">
             <img
               src={studioImage}
-              alt="A florist trimming dahlia stems at a wooden workbench"
+              alt="A florist arranging peonies, hydrangea and roses at the studio table"
               loading="lazy"
             />
             <img
               src={bouquetImage}
-              alt="A ranunculus bouquet wrapped in handmade paper and a silk ribbon"
+              alt="A hand-tied bouquet wrapped in peach paper and a silk ribbon"
               loading="lazy"
             />
           </div>

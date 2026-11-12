@@ -1,20 +1,21 @@
-import { CalendarIcon, CheckCircleIcon } from "../../components/Icons.jsx";
+import { CheckCircleIcon, FlowerIcon } from "../../components/Icons.jsx";
 import "./Subscription.css";
 
 export default function Subscription() {
   return (
-    <section className="section" id="subscription">
+    <section className="section" id="bespoke">
       <div className="container">
         <div className="subscription">
           <div className="subscription__text">
             <span className="subscription__label">
-              <CalendarIcon />
-              Bespoke Subscription
+              <FlowerIcon />
+              Bespoke Floristry
             </span>
-            <h2 className="subscription__title">Living Poetry, Every Fortnight</h2>
+            <h2 className="subscription__title">Arranged Around Your Moment</h2>
             <p className="subscription__desc">
-              Hand-gathered seasonal flora delivered directly to your doorstep. Includes bespoke
-              studio ceramic matching and bespoke care guides.
+              Weddings, celebrations or a single heartfelt gift. Tell us the
+              occasion, colours and budget, and our florists will design an
+              arrangement made only for you.
             </p>
           </div>
 
@@ -22,15 +23,18 @@ export default function Subscription() {
             <ul className="subscription__features">
               <li>
                 <CheckCircleIcon />
-                Weekly or monthly flexible cadence
+                Free design consultation with a florist
               </li>
               <li>
                 <CheckCircleIcon />
-                Complimentary artisan vessels
+                Handwritten card with every order
               </li>
             </ul>
-            <a href="#join" className="btn btn--rust btn--block">
-              Join the Club
+            <a
+              href="mailto:lenafcdk@gmail.com"
+              className="btn btn--rust btn--block"
+            >
+              Request a Bespoke Bouquet
             </a>
           </div>
         </div>

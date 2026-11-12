@@ -1,0 +1,107 @@
+/* ---------- Why Garden Muse ---------- */
+.promises {
+  padding-top: 24px;
+}
+
+/* Flex + wrap + center: works for any number of cards, and a card left
+   alone on the last row sits in the middle instead of on the left. */
+.promises__list {
+  --promise-gap: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--promise-gap);
+}
+
+/* 2 cards per row on phones */
+.promises__list > .promise {
+  flex: 0 1 calc((100% - var(--promise-gap)) / 2);
+}
+
+/* Row 1: icon + title side by side. Row 2: text across the full width. */
+.promise {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 10px 12px;
+  padding: 18px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-soft);
+}
+
+.promise__icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-surface);
+  color: var(--color-rust);
+  box-shadow: var(--shadow-card);
+}
+
+/* alternate icon colours: rust, green, rust, green */
+.promise:nth-child(even) .promise__icon {
+  color: var(--color-green);
+}
+
+.promise__icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.promise__title {
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.15;
+}
+
+.promise__text {
+  grid-column: 1 / -1;
+  align-self: start;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--color-text-muted);
+}
+
+/* ---------- Desktop ---------- */
+@media (min-width: 1024px) {
+  .promises {
+    padding-top: 32px;
+  }
+
+  /* all cards in one row, sharing the width equally */
+  .promises__list {
+    --promise-gap: 20px;
+    flex-wrap: nowrap;
+  }
+
+  .promises__list > .promise {
+    flex: 1 1 0;
+    max-width: 380px;
+  }
+
+  .promise {
+    padding: 28px 24px;
+    gap: 14px 14px;
+  }
+
+  .promise__icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .promise__icon svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .promise__title {
+    font-size: 22px;
+  }
+
+  .promise__text {
+    font-size: 14px;
+  }
+}

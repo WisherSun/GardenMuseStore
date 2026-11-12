@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useLocation } from "react-router";
 
 // After moving to another page: scroll to the top,
-// or to a section if the link has one (e.g. "/#botanicals").
+// or to a section if the link has one (e.g. "/#bespoke").
 export default function ScrollManager() {
   const { pathname, hash } = useLocation();
 

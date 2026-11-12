@@ -1,19 +1,21 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { useAuth } from "../hooks/useAuth.js";
+import { useCart } from "../hooks/useCart.js";
 import { BagIcon, CloseIcon, HeartIcon, MenuIcon, SearchIcon, UserIcon } from "./Icons.jsx";
 import "./Header.css";
 
 // "/#section" links work from any page: they open Home and scroll to that section.
 const navLinks = [
-  { label: "Shop", to: "/#botanicals" },
+  { label: "Shop", to: "/shop" },
   { label: "Arrangements", to: "/#arrangements" },
-  { label: "Subscriptions", to: "/#subscription" },
+  { label: "Bespoke", to: "/#bespoke" },
   { label: "Our Craft", to: "/#craft" },
   { label: "Journal", to: "/#journal" },
 ];
 
-export default function Header({ cartCount }) {
+export default function Header() {
+  const { count: cartCount } = useCart();
   const [menuOpen, setMenuOpen] = useState(false);
   const { user } = useAuth();
   const accountLink = user ? "/account" : "/login";
@@ -73,7 +75,7 @@ export default function Header({ cartCount }) {
             {user && <span className="header__dot" aria-hidden="true" />}
           </Link>
           <Link
-            to="/#cart"
+            to="/cart"
             className="header__icon-btn header__cart"
             aria-label={`Cart, ${cartCount} ${cartCount === 1 ? "item" : "items"}`}
           >

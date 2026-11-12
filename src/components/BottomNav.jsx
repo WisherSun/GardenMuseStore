@@ -1,10 +1,12 @@
 import { Link, useLocation } from "react-router";
 import { useAuth } from "../hooks/useAuth.js";
+import { useCart } from "../hooks/useCart.js";
 import { BagIcon, FlowerIcon, HeartIcon, UserIcon } from "./Icons.jsx";
 import "./BottomNav.css";
 
 // Phone/tablet-only navigation bar fixed to the bottom of the screen.
-export default function BottomNav({ cartCount }) {
+export default function BottomNav() {
+  const { count: cartCount } = useCart();
   const { pathname } = useLocation();
   const { user } = useAuth();
   const accountPaths = ["/login", "/signup", "/account", "/forgot-password", "/reset-password"];
@@ -18,7 +20,7 @@ export default function BottomNav({ cartCount }) {
       Icon: UserIcon,
       active: accountPaths.includes(pathname),
     },
-    { label: "Cart", to: "/#cart", Icon: BagIcon, count: cartCount },
+    { label: "Cart", to: "/cart", Icon: BagIcon, count: cartCount, active: pathname === "/cart" },
   ];
 
   return (
