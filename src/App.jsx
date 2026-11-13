@@ -1,7 +1,6 @@
 import { Route, Routes } from "react-router";
 import Header from "./components/Header.jsx";
 import Footer from "./components/Footer.jsx";
-import BottomNav from "./components/BottomNav.jsx";
 import ScrollManager from "./components/ScrollManager.jsx";
 import HomePage from "./pages/Home/HomePage.jsx";
 import ShopPage from "./pages/Shop/ShopPage.jsx";
@@ -34,7 +33,6 @@ function App() {
         </Routes>
       </main>
       <Footer />
-      <BottomNav />
     </>
   );
 }

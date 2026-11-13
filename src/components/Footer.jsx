@@ -45,11 +45,6 @@ export default function Footer() {
 
         <div className="footer__bottom">
           <p>© {year} Garden Muse Ltd.</p>
-          <nav className="footer__legal" aria-label="Legal">
-            <a href="#privacy">Privacy</a>
-            <a href="#terms">Terms</a>
-            <a href="#delivery">Delivery</a>
-          </nav>
         </div>
       </div>
     </footer>

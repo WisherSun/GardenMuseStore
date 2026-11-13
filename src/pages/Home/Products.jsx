@@ -56,20 +56,28 @@ function ProductGrid() {
 export default function Products() {
   return (
     <>
-      {/* Flora of the week: product grid loaded from Supabase */}
+      {/* Our Shop: a few products from Supabase, with a link to the full shop */}
       <section className="arrangements" id="arrangements">
         <div className="container">
           <div className="arrangements__head">
             <div>
-              <span className="eyebrow">Flora of the Week</span>
-              <h2 className="arrangements__title">Sculpted Arrangements</h2>
+              <span className="eyebrow">Our Shop</span>
+              <h2 className="arrangements__title">Blooms We Love</h2>
             </div>
-            <Link to="/shop" className="view-all">
+            {/* Next to the title on tablet/desktop */}
+            <Link to="/shop" className="view-all view-all--top">
               View all <ArrowRightIcon />
             </Link>
           </div>
 
           <ProductGrid />
+
+          {/* Under the cards on phones */}
+          <div className="arrangements__more">
+            <Link to="/shop" className="view-all">
+              View all <ArrowRightIcon />
+            </Link>
+          </div>
         </div>
       </section>
     </>

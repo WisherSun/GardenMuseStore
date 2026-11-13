@@ -168,12 +168,12 @@ export default function CartProvider({ children }) {
     });
   }, [userId, show, track]);
 
-  // Turns the saved basket into an order. Returns the new order id; throws if it fails
-  // (the basket is then left as it was).
-  const checkout = useCallback(async () => {
+  // Turns the saved basket into an order. `delivery` = { phone, address }.
+  // Returns the new order id; throws if it fails (the basket is then left as it was).
+  const checkout = useCallback(async (delivery) => {
     if (!userId) throw new Error("Please sign in to place an order");
     await Promise.allSettled([...pendingRef.current]);
-    const orderId = await placeOrder();
+    const orderId = await placeOrder(delivery);
     show([]); // the database emptied the basket
     return orderId;
   }, [userId, show]);

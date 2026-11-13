@@ -3,13 +3,12 @@ import { createPortal } from "react-dom";
 import { Link } from "react-router";
 import { useAuth } from "../hooks/useAuth.js";
 import { useCart } from "../hooks/useCart.js";
-import { BagIcon, CloseIcon, HeartIcon, MenuIcon, SearchIcon, UserIcon } from "./Icons.jsx";
+import { BagIcon, CloseIcon, MenuIcon, UserIcon } from "./Icons.jsx";
 import "./Header.css";
 
 // "/#section" links work from any page: they open Home and scroll to that section.
 const navLinks = [
   { label: "Shop", to: "/shop" },
-  { label: "Arrangements", to: "/#arrangements" },
   { label: "Bespoke", to: "/#bespoke" },
   { label: "Our Craft", to: "/#craft" },
   { label: "Flower Care", to: "/#care" },
@@ -67,12 +66,6 @@ export default function Header() {
         </nav>
 
         <div className="header__actions">
-          <button className="header__icon-btn" aria-label="Search">
-            <SearchIcon />
-          </button>
-          <Link to="/#saved" className="header__icon-btn header__desktop-only" aria-label="Saved items">
-            <HeartIcon />
-          </Link>
           <Link
             to={accountLink}
             className="header__icon-btn header__desktop-only"

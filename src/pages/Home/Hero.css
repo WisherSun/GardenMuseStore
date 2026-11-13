@@ -27,6 +27,10 @@
   object-fit: cover;
   object-position: 50% 40%;
   z-index: -2;
+  /* Tiny 32×16 copy of the photo (under 1 KB, built into the CSS). Stretched, it looks
+     like a soft blur and is shown until the real photo arrives. */
+  background: url("data:image/webp;base64,UklGRsgAAABXRUJQVlA4ILwAAACwBACdASogABAAPtFWpUwoJKOiMAgBABoJZwAM5ONBpyY5OmEkXIMERpys3PSAAP7lfhoVhLRMKbWS+gIe6zB8PqfmsMo74llDPlXLX4gBbs2FL/YGDH0DMb30B79Aw5+Z4Eour737nMLC6vEUq4kZHBjrHbZd+2cWo+KDbcphTP4WCzClWMosDtnDqKXtrruwotRwFd6CC6APdyHwIoHvhjSPtVGXZPm00Kaz24hqmNGneA/BCz4rU2deAA==")
+    50% 40% / cover no-repeat;
 }
 
 /* Darkens the bottom of the photo so white text stays readable */

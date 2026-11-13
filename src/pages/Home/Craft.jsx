@@ -44,7 +44,7 @@ export default function Craft() {
               arrangements transformed our gallery space.”
             </blockquote>
             <figcaption className="testimonial__source">
-              — Architectural Digest Botanical Review
+              — Verdant Interiors Magazine
             </figcaption>
           </figure>
         </div>

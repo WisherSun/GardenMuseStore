@@ -390,6 +390,34 @@
   cursor: pointer;
 }
 
+.admin-order__delivery {
+  display: grid;
+  gap: 4px;
+  margin: 0 0 12px;
+  font-size: 14px;
+}
+
+.admin-order__delivery > div {
+  display: grid;
+  grid-template-columns: 70px minmax(0, 1fr);
+  gap: 8px;
+}
+
+.admin-order__delivery dt {
+  color: var(--color-text-muted);
+}
+
+.admin-order__delivery dd {
+  margin: 0;
+  color: var(--color-ink);
+  white-space: pre-line; /* keeps line breaks the customer typed in the address */
+  overflow-wrap: anywhere;
+}
+
+.admin-order__delivery a {
+  color: var(--color-rust);
+}
+
 .admin-order__items {
   display: grid;
   gap: 6px;

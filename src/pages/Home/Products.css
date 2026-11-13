@@ -29,6 +29,34 @@
   white-space: nowrap;
 }
 
+/* "View all": under the cards on phones, next to the title from 640px */
+.view-all--top {
+  display: none;
+}
+
+.arrangements__more {
+  margin-top: 20px;
+  text-align: center;
+}
+
+/* Phones: heading centred (the "View all" link is under the cards there) */
+@media (max-width: 639px) {
+  .arrangements__head {
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+@media (min-width: 640px) {
+  .view-all--top {
+    display: inline-flex;
+  }
+
+  .arrangements__more {
+    display: none;
+  }
+}
+
 .view-all svg {
   width: 16px;
   height: 16px;

@@ -1,6 +1,7 @@
 -- Admin panel: who is an admin, and what admins may do.
 -- Run once in Supabase -> SQL Editor (safe to run again).
 -- All checks happen here in the database; the website only hides or shows the admin page.
+-- Then run orders-delivery.sql: it adds phone and address to admin_list_orders().
 
 -- ============ 1. Who is an admin ============
 -- A user is an admin if their id is in this table. RLS is on with no policies,
@@ -83,18 +84,20 @@ create policy "Admins update orders" on orders
 create policy "Admins read all order items" on order_items
   for select to authenticated using (public.is_admin());
 
--- Allowed order statuses
-do $$
-begin
-  alter table orders add constraint orders_status_check
-    check (status in ('new', 'confirmed', 'delivered', 'cancelled'));
-exception when duplicate_object then null;
-end $$;
+-- Allowed order statuses.
+-- The old rule is removed first: if the table was created with its own status check,
+-- Postgres gave it this same name, and it may not allow 'confirmed' / 'delivered'.
+alter table orders drop constraint if exists orders_status_check;
+update orders set status = 'new'
+  where status is null or status not in ('new', 'confirmed', 'delivered', 'cancelled');
+alter table orders add constraint orders_status_check
+  check (status in ('new', 'confirmed', 'delivered', 'cancelled'));
 
 -- All orders with the customer's email, items and total (newest first).
 -- Customer emails live in auth.users, which the website can't read directly,
 -- so this function returns them, and only to admins (others get no rows).
-create or replace function public.admin_list_orders()
+drop function if exists public.admin_list_orders();
+create function public.admin_list_orders()
 returns table (
   id bigint,
   created_at timestamptz,

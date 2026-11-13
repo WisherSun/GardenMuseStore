@@ -4,6 +4,8 @@ import { useCart } from "../../hooks/useCart.js";
 import { fetchFlowersByIds } from "../../api/flowers.js";
 import { formatPrice } from "../../lib/format.js";
 import { BagIcon, CheckCircleIcon, CloseIcon } from "../../components/Icons.jsx";
+import { TextField } from "../Auth/AuthFields.jsx";
+import authStyles from "../Auth/Auth.module.css";
 import "./Cart.css";
 
 const MAX_QUANTITY = 99;
@@ -133,11 +135,25 @@ function CartItemSkeleton() {
   );
 }
 
+// Same rule as in the database: digits, spaces, ( ) - and an optional + at the start
+const PHONE_PATTERN = /^\+?[0-9 ()-]{6,20}$/;
+
+function validateDelivery({ phone, address }) {
+  const errors = {};
+  if (!PHONE_PATTERN.test(phone.trim())) errors.phone = "Enter a phone number, e.g. +1 555 123 4567.";
+  const length = address.trim().length;
+  if (length < 5) errors.address = "Enter the full delivery address.";
+  else if (length > 300) errors.address = "The address is too long (300 characters max).";
+  return errors;
+}
+
 // Turns the database error into something a customer can read.
 function orderErrorMessage(err) {
   const message = err?.message ?? "";
   if (message.includes("basket is empty")) return "Your basket is empty.";
   if (message.includes("sign in")) return "Please sign in to place an order.";
+  if (message.includes("phone number")) return "Please enter a valid phone number.";
+  if (message.includes("delivery address")) return "Please enter the delivery address.";
   return "We couldn’t place your order. Please try again.";
 }
 
@@ -165,12 +181,26 @@ export default function CartPage() {
   const [placing, setPlacing] = useState(false);
   const [orderError, setOrderError] = useState(null);
   const [placedOrderId, setPlacedOrderId] = useState(null);
+  const [delivery, setDelivery] = useState({ phone: "", address: "" });
+  const [deliveryErrors, setDeliveryErrors] = useState({});
 
-  const handlePlaceOrder = async () => {
+  const changeDelivery = (field) => (e) => {
+    setDelivery((d) => ({ ...d, [field]: e.target.value }));
+    setDeliveryErrors((errs) => ({ ...errs, [field]: undefined }));
+  };
+
+  const handlePlaceOrder = async (e) => {
+    e.preventDefault();
+    const errors = validateDelivery(delivery);
+    setDeliveryErrors(errors);
+    if (Object.keys(errors).length) return;
+
     setPlacing(true);
     setOrderError(null);
     try {
-      setPlacedOrderId(await checkout());
+      setPlacedOrderId(
+        await checkout({ phone: delivery.phone.trim(), address: delivery.address.trim() }),
+      );
     } catch (err) {
       console.error("Could not place the order:", err);
       setOrderError(orderErrorMessage(err));
@@ -272,10 +302,6 @@ export default function CartPage() {
                     <dd>−{formatPrice(savings)}</dd>
                   </div>
                 )}
-                <div>
-                  <dt>Delivery</dt>
-                  <dd>Calculated at checkout</dd>
-                </div>
                 <div className="cart-summary__total">
                   <dt>Subtotal</dt>
                   <dd>{formatPrice(subtotal)}</dd>
@@ -292,10 +318,42 @@ export default function CartPage() {
                   </p>
                 </>
               ) : (
-                <>
+                <form className="checkout-form" onSubmit={handlePlaceOrder} noValidate>
+                  <h3 className="checkout-form__title">Delivery details</h3>
+                  <TextField
+                    label="Phone"
+                    type="tel"
+                    autoComplete="tel"
+                    placeholder="+1 555 123 4567"
+                    value={delivery.phone}
+                    onChange={changeDelivery("phone")}
+                    error={deliveryErrors.phone}
+                  />
+                  <div className={authStyles.field}>
+                    <label htmlFor="delivery-address" className={authStyles.label}>
+                      Delivery address
+                    </label>
+                    <textarea
+                      id="delivery-address"
+                      className={`${authStyles.input} checkout-form__address`}
+                      rows={3}
+                      autoComplete="street-address"
+                      placeholder="Street, house, apartment, city"
+                      value={delivery.address}
+                      onChange={changeDelivery("address")}
+                      aria-invalid={Boolean(deliveryErrors.address)}
+                      aria-describedby={deliveryErrors.address ? "delivery-address-error" : undefined}
+                    />
+                    {deliveryErrors.address && (
+                      <p id="delivery-address-error" className={authStyles.fieldError}>
+                        {deliveryErrors.address}
+                      </p>
+                    )}
+                  </div>
+
                   <button
+                    type="submit"
                     className="btn btn--rust btn--block"
-                    onClick={handlePlaceOrder}
                     disabled={placing || loading}
                     aria-busy={placing}
                   >
@@ -307,7 +365,7 @@ export default function CartPage() {
                     </p>
                   )}
                   <p className="cart-summary__note">Payment on delivery.</p>
-                </>
+                </form>
               )}
             </aside>
           </div>

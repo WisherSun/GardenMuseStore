@@ -8,6 +8,16 @@
     <meta name="theme-color" content="#fcf9f4" />
     <title>Garden Muse — Floral Atelier</title>
 
+    <!-- Start downloading the hero photo right away (same sizes as in src/pages/Home/Hero.jsx) -->
+    <link
+      rel="preload"
+      as="image"
+      type="image/webp"
+      fetchpriority="high"
+      imagesrcset="/hero/hero-640.webp 640w, /hero/hero-960.webp 960w, /hero/hero-1400.webp 1400w, /hero/hero-2000.webp 2000w"
+      imagesizes="(min-width: 1280px) 1790px, 145vw"
+    />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

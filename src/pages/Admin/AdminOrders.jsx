@@ -56,7 +56,8 @@ export default function AdminOrders() {
     } catch (err) {
       console.error("Could not update order:", err);
       setOrders((list) => list.map((o) => (o.id === order.id ? { ...o, status: previous } : o)));
-      setError(`Could not update order #${order.id}. Please try again.`);
+      // Admin-only screen, so the database's own message is shown to help find the cause
+      setError(`Could not update order #${order.id}: ${err.message ?? "unknown error"}`);
     }
   };
 
@@ -127,6 +128,23 @@ export default function AdminOrders() {
                   </select>
                 </label>
               </div>
+
+              <dl className="admin-order__delivery">
+                <div>
+                  <dt>Phone</dt>
+                  <dd>
+                    {order.phone ? (
+                      <a href={`tel:${order.phone.replace(/[^\d+]/g, "")}`}>{order.phone}</a>
+                    ) : (
+                      "—"
+                    )}
+                  </dd>
+                </div>
+                <div>
+                  <dt>Address</dt>
+                  <dd>{order.address || "—"}</dd>
+                </div>
+              </dl>
 
               <ul className="admin-order__items">
                 {order.items.map((item, i) => (

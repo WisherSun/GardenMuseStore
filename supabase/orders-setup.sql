@@ -1,5 +1,7 @@
 -- Checkout: turns the signed-in user's basket into an order.
 -- Run once in Supabase -> SQL Editor (safe to run again).
+-- Then run orders-delivery.sql: it replaces place_order() with a version that
+-- also saves the phone and delivery address.
 
 -- 1. Sensible defaults for new orders
 alter table orders alter column user_id set default auth.uid();

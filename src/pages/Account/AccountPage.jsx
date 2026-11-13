@@ -3,6 +3,7 @@ import { useAuth } from "../../hooks/useAuth.js";
 import AuthLayout from "../Auth/AuthLayout.jsx";
 import { FormAlert } from "../Auth/AuthFields.jsx";
 import styles from "../Auth/Auth.module.css";
+import MyOrders from "./MyOrders.jsx";
 
 // Simple account page. Only for logged-in users; others are sent to /login.
 export default function AccountPage() {
@@ -28,7 +29,7 @@ export default function AccountPage() {
     <AuthLayout
       eyebrow="My account"
       title={name ? `Hello, ${name.split(" ")[0]}` : "Hello"}
-      subtitle="Order history and saved arrangements are coming soon."
+      subtitle="Your details and the orders you've placed."
     >
       {location.state?.passwordChanged && (
         <div style={{ marginBottom: 20 }}>
@@ -64,6 +65,8 @@ export default function AccountPage() {
           Sign out
         </button>
       </div>
+
+      <MyOrders userId={user.id} />
     </AuthLayout>
   );
 }

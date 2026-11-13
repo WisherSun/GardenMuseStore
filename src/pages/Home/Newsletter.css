@@ -11,6 +11,13 @@
   background: var(--color-sand);
 }
 
+/* Phones: everything centred (heading, intro and tips) */
+@media (max-width: 639px) {
+  .newsletter {
+    text-align: center;
+  }
+}
+
 .newsletter__title {
   margin: 10px 0 12px;
   font-size: clamp(30px, 8vw, 48px);
@@ -30,11 +37,8 @@
   list-style: none;
 }
 
+/* Phones: number above the title (plain blocks) */
 .care-tip {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 14px;
-  align-items: start;
   padding-bottom: 16px;
   border-bottom: 1px solid #e2ddd5;
 }
@@ -45,6 +49,8 @@
 }
 
 .care-tip__number {
+  display: block;
+  margin-bottom: 2px;
   font-family: var(--font-serif);
   font-size: 22px;
   font-style: italic;
@@ -55,6 +61,20 @@
 .care-tip__title {
   font-size: 20px;
   font-weight: 600;
+}
+
+/* Tablet & desktop: number to the left of the title */
+@media (min-width: 640px) {
+  .care-tip {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 14px;
+    align-items: start;
+  }
+
+  .care-tip__number {
+    margin-bottom: 0;
+  }
 }
 
 .care-tip__text {

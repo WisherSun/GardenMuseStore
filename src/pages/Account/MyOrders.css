@@ -1,0 +1,113 @@
+/* "My orders" on the Account page */
+.my-orders {
+  margin-top: 36px;
+}
+
+.my-orders__title {
+  margin-bottom: 14px;
+  font-size: 26px;
+}
+
+.my-orders__note {
+  font-size: 15px;
+  color: var(--color-text-muted);
+}
+
+.my-orders__note a,
+.my-orders__retry {
+  color: var(--color-rust);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.my-orders__list {
+  display: grid;
+  gap: 12px;
+}
+
+/* Coloured left edge shows the status, same idea as the admin panel */
+.my-order {
+  padding: 14px 16px;
+  border: 1px solid #efebe5;
+  border-left: 4px solid var(--color-peach);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+}
+
+.my-order--confirmed {
+  border-left-color: var(--color-sage);
+}
+
+.my-order--delivered {
+  border-left-color: var(--color-green);
+}
+
+.my-order--cancelled {
+  border-left-color: #c4c0b8;
+  opacity: 0.75;
+}
+
+.my-order__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.my-order__id {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.my-order__date {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.my-order__status {
+  flex: none;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--color-sand);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+}
+
+.my-order__items {
+  display: grid;
+  gap: 6px;
+  padding: 10px 0;
+  border-top: 1px solid #f0ece6;
+  border-bottom: 1px solid #f0ece6;
+  font-size: 14px;
+}
+
+.my-order__items li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.my-order__qty {
+  color: var(--color-text-muted);
+}
+
+.my-order__address {
+  padding-top: 8px;
+  font-size: 13px;
+  color: var(--color-text-muted);
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.my-order__total {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 8px;
+  font-weight: 600;
+  color: var(--color-ink);
+}

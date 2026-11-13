@@ -210,6 +210,44 @@
   color: var(--color-rust);
 }
 
+/* Quantity control shown instead of "Add" once the flower is in the basket */
+.product-card__stepper {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface);
+}
+
+.product-card__stepper button {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 16px;
+  line-height: 1;
+  color: var(--color-rust);
+  transition: background-color 0.2s;
+}
+
+.product-card__stepper button:hover:not(:disabled) {
+  background: var(--color-sand);
+}
+
+.product-card__stepper button:disabled {
+  color: #c4c0b8;
+  cursor: default;
+}
+
+.product-card__stepper span {
+  min-width: 18px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--color-ink);
+}
+
 .product-card__add:hover {
   text-decoration: underline;
   text-underline-offset: 3px;
