@@ -4,6 +4,7 @@ import Footer from "./components/Footer.jsx";
 import ScrollManager from "./components/ScrollManager.jsx";
 import HomePage from "./pages/Home/HomePage.jsx";
 import ShopPage from "./pages/Shop/ShopPage.jsx";
+import ProductPage from "./pages/Product/ProductPage.jsx";
 import CartPage from "./pages/Cart/CartPage.jsx";
 import LoginPage from "./pages/Auth/LoginPage.jsx";
 import SignUpPage from "./pages/Auth/SignUpPage.jsx";
@@ -23,6 +24,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/shop" element={<ShopPage />} />
+          <Route path="/shop/:id" element={<ProductPage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/bespoke" element={<BespokePage />} />
           <Route path="/login" element={<LoginPage />} />

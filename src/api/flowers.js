@@ -10,9 +10,21 @@ function toProduct(row) {
     name: row.name,
     description: row.description ?? "",
     image: row.image,
+    // Main photo first, then the extra ones that are filled in (empty ones are skipped).
+    images: [row.image, row.image2, row.image3, row.image4].filter(Boolean),
+    details: row.details ?? "",
     price,
     salePrice: onSale ? Number(row.newPrice) : null,
   };
+}
+
+// Loads one flower for its own page. Returns null if there is no flower with this id.
+export async function fetchFlowerById(id) {
+  if (!supabase) throw new Error("Supabase is not configured");
+
+  const { data, error } = await supabase.from("Flowers").select("*").eq("id", id).maybeSingle();
+  if (error) throw error;
+  return data ? toProduct(data) : null;
 }
 
 export async function fetchFlowers({ limit } = {}) {

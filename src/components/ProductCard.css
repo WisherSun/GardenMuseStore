@@ -17,6 +17,7 @@
 
 /* ---------- Product card ---------- */
 .product-card {
+  position: relative;
   display: flex;
   flex-direction: column;
   padding: 10px;
@@ -107,6 +108,36 @@
   font-size: clamp(18px, 5vw, 22px);
   font-weight: 600;
   line-height: 1.2;
+}
+
+/* The name link covers the whole card, so a click on the photo or text opens the flower page.
+   The basket buttons are lifted above it (z-index) so they keep working on their own. */
+.product-card__link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+}
+
+.product-card__link:focus-visible {
+  outline: none;
+}
+
+.product-card:has(.product-card__link:focus-visible) {
+  outline: 2px solid var(--color-rust);
+  outline-offset: 3px;
+}
+
+.product-card__quick-add,
+.product-card__add,
+.product-card__stepper {
+  z-index: 2;
+}
+
+.product-card__add,
+.product-card__stepper {
+  position: relative;
 }
 
 .product-card__desc {

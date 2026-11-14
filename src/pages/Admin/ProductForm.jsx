@@ -1,8 +1,13 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { createFlower, updateFlower } from "../../api/admin.js";
-import { TextField, FormAlert } from "../Auth/AuthFields.jsx";
+import { TextField, TextAreaField, FormAlert } from "../Auth/AuthFields.jsx";
 import { CloseIcon } from "../../components/Icons.jsx";
 import authStyles from "../Auth/Auth.module.css";
+
+// Extra photos for the flower page gallery. Optional.
+const EXTRA_IMAGES = ["image2", "image3", "image4"];
+
+const isLink = (value) => /^https?:\/\/\S+$/i.test(value.trim());
 
 function toForm(product) {
   return {
@@ -12,7 +17,29 @@ function toForm(product) {
     discount: Boolean(product?.discount),
     newPrice: product?.newPrice != null ? String(product.newPrice) : "",
     image: product?.image ?? "",
+    image2: product?.image2 ?? "",
+    image3: product?.image3 ?? "",
+    image4: product?.image4 ?? "",
+    details: product?.details ?? "",
   };
+}
+
+// Link + small preview of the photo once the link looks valid
+function ImageField({ label, value, onChange, error, hint }) {
+  return (
+    <div className="admin-form__image">
+      <TextField
+        label={label}
+        type="url"
+        placeholder="https://images.unsplash.com/…"
+        value={value}
+        onChange={onChange}
+        error={error}
+        hint={hint}
+      />
+      {isLink(value) && <img className="admin-form__preview" src={value.trim()} alt="Preview" />}
+    </div>
+  );
 }
 
 function validate(form) {
@@ -26,7 +53,10 @@ function validate(form) {
     if (!form.newPrice.trim() || !(newPrice > 0)) errors.newPrice = "Enter the sale price.";
     else if (price > 0 && newPrice >= price) errors.newPrice = "Sale price must be lower than the price.";
   }
-  if (!/^https?:\/\/\S+$/i.test(form.image.trim())) errors.image = "Enter an image link starting with https://";
+  if (!isLink(form.image)) errors.image = "Enter an image link starting with https://";
+  for (const field of EXTRA_IMAGES) {
+    if (form[field].trim() && !isLink(form[field])) errors[field] = "Link must start with https:// (or leave it empty).";
+  }
   return errors;
 }
 
@@ -67,6 +97,11 @@ export default function ProductForm({ product, onCancel, onSaved }) {
       discount: form.discount,
       newPrice: form.discount ? Number(form.newPrice) : null,
       image: form.image.trim(),
+      // Empty boxes are saved as null, so the flower page simply skips them.
+      image2: form.image2.trim() || null,
+      image3: form.image3.trim() || null,
+      image4: form.image4.trim() || null,
+      details: form.details.trim() || null,
     };
 
     setSaving(true);
@@ -80,8 +115,6 @@ export default function ProductForm({ product, onCancel, onSaved }) {
       setSaving(false);
     }
   };
-
-  const showPreview = /^https?:\/\/\S+$/i.test(form.image.trim());
 
   return (
     <dialog
@@ -150,17 +183,34 @@ export default function ProductForm({ product, onCancel, onSaved }) {
           On sale
         </label>
 
-        <div className="admin-form__image">
-          <TextField
-            label="Image link"
-            type="url"
-            placeholder="https://images.unsplash.com/…"
-            value={form.image}
-            onChange={set("image")}
-            error={errors.image}
-          />
-          {showPreview && <img className="admin-form__preview" src={form.image.trim()} alt="Preview" />}
-        </div>
+        <ImageField
+          label="Main image link"
+          value={form.image}
+          onChange={set("image")}
+          error={errors.image}
+          hint="Shown on the product card and first on the flower page."
+        />
+
+        <fieldset className="admin-form__group">
+          <legend className="admin-form__legend">Extra photos for the flower page (optional)</legend>
+          {EXTRA_IMAGES.map((field, i) => (
+            <ImageField
+              key={field}
+              label={`Photo ${i + 2}`}
+              value={form[field]}
+              onChange={set(field)}
+              error={errors[field]}
+            />
+          ))}
+        </fieldset>
+
+        <TextAreaField
+          label="Details"
+          rows={5}
+          value={form.details}
+          onChange={set("details")}
+          hint="Longer text for the flower page. Start the care advice with “Care:” to show it in its own box."
+        />
 
         <div className="admin-form__actions">
           <button type="button" className="btn btn--light" onClick={onCancel}>
