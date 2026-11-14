@@ -5,7 +5,6 @@ import { fetchFlowersByIds } from "../../api/flowers.js";
 import { formatPrice } from "../../lib/format.js";
 import { BagIcon, CheckCircleIcon, CloseIcon } from "../../components/Icons.jsx";
 import { TextField } from "../Auth/AuthFields.jsx";
-import authStyles from "../Auth/Auth.module.css";
 import "./Cart.css";
 
 const MAX_QUANTITY = 99;
@@ -135,15 +134,33 @@ function CartItemSkeleton() {
   );
 }
 
-// Same rule as in the database: digits, spaces, ( ) - and an optional + at the start
+// Same rules as in the database (supabase/orders-shipping-address.sql)
 const PHONE_PATTERN = /^\+?[0-9 ()-]{6,20}$/;
 
-function validateDelivery({ phone, address }) {
+const EMPTY_DELIVERY = { fullName: "", city: "", street: "", building: "", flat: "", phone: "" };
+
+function validateDelivery(d) {
   const errors = {};
-  if (!PHONE_PATTERN.test(phone.trim())) errors.phone = "Enter a phone number, e.g. +1 555 123 4567.";
-  const length = address.trim().length;
-  if (length < 5) errors.address = "Enter the full delivery address.";
-  else if (length > 300) errors.address = "The address is too long (300 characters max).";
+  const length = (value) => value.trim().length;
+
+  if (length(d.fullName) < 2) errors.fullName = "Enter the recipient’s name.";
+  else if (length(d.fullName) > 100) errors.fullName = "The name is too long (100 characters max).";
+
+  if (length(d.city) < 2) errors.city = "Enter the city.";
+  else if (length(d.city) > 100) errors.city = "The city is too long (100 characters max).";
+
+  if (length(d.street) < 2) errors.street = "Enter the street.";
+  else if (length(d.street) > 150) errors.street = "The street is too long (150 characters max).";
+
+  if (length(d.building) < 1) errors.building = "Enter the building number or name.";
+  else if (length(d.building) > 50) errors.building = "Too long (50 characters max).";
+
+  if (length(d.flat) > 20) errors.flat = "Too long (20 characters max).";
+
+  // Phone is optional, but if it's filled in it must look like a phone number
+  if (d.phone.trim() && !PHONE_PATTERN.test(d.phone.trim()))
+    errors.phone = "Enter a phone number, e.g. +1 555 123 4567.";
+
   return errors;
 }
 
@@ -153,7 +170,11 @@ function orderErrorMessage(err) {
   if (message.includes("basket is empty")) return "Your basket is empty.";
   if (message.includes("sign in")) return "Please sign in to place an order.";
   if (message.includes("phone number")) return "Please enter a valid phone number.";
-  if (message.includes("delivery address")) return "Please enter the delivery address.";
+  if (message.includes("recipient name")) return "Please enter the recipient’s name.";
+  if (message.includes("city")) return "Please enter the city.";
+  if (message.includes("street")) return "Please enter the street.";
+  if (message.includes("building")) return "Please enter the building number or name.";
+  if (message.includes("flat")) return "Please enter a shorter flat number.";
   return "We couldn’t place your order. Please try again.";
 }
 
@@ -181,7 +202,7 @@ export default function CartPage() {
   const [placing, setPlacing] = useState(false);
   const [orderError, setOrderError] = useState(null);
   const [placedOrderId, setPlacedOrderId] = useState(null);
-  const [delivery, setDelivery] = useState({ phone: "", address: "" });
+  const [delivery, setDelivery] = useState(EMPTY_DELIVERY);
   const [deliveryErrors, setDeliveryErrors] = useState({});
 
   const changeDelivery = (field) => (e) => {
@@ -198,9 +219,10 @@ export default function CartPage() {
     setPlacing(true);
     setOrderError(null);
     try {
-      setPlacedOrderId(
-        await checkout({ phone: delivery.phone.trim(), address: delivery.address.trim() }),
+      const trimmed = Object.fromEntries(
+        Object.entries(delivery).map(([field, value]) => [field, value.trim()]),
       );
+      setPlacedOrderId(await checkout(trimmed));
     } catch (err) {
       console.error("Could not place the order:", err);
       setOrderError(orderErrorMessage(err));
@@ -319,37 +341,59 @@ export default function CartPage() {
                 </>
               ) : (
                 <form className="checkout-form" onSubmit={handlePlaceOrder} noValidate>
-                  <h3 className="checkout-form__title">Delivery details</h3>
+                  <h3 className="checkout-form__title">Shipping address</h3>
+                  <TextField
+                    label="Name *"
+                    autoComplete="shipping name"
+                    placeholder="First and last name"
+                    value={delivery.fullName}
+                    onChange={changeDelivery("fullName")}
+                    error={deliveryErrors.fullName}
+                  />
+                  <TextField
+                    label="City *"
+                    autoComplete="shipping address-level2"
+                    placeholder="London"
+                    value={delivery.city}
+                    onChange={changeDelivery("city")}
+                    error={deliveryErrors.city}
+                  />
+                  <TextField
+                    label="Street *"
+                    autoComplete="shipping address-line1"
+                    placeholder="Baker Street"
+                    value={delivery.street}
+                    onChange={changeDelivery("street")}
+                    error={deliveryErrors.street}
+                  />
+                  <TextField
+                    label="Building *"
+                    placeholder="221B or Rose Court"
+                    maxLength={50}
+                    value={delivery.building}
+                    onChange={changeDelivery("building")}
+                    error={deliveryErrors.building}
+                  />
+                  <TextField
+                    label="Flat"
+                    autoComplete="shipping address-line2"
+                    placeholder="e.g. 4"
+                    hint="Leave empty if it’s a house."
+                    maxLength={20}
+                    value={delivery.flat}
+                    onChange={changeDelivery("flat")}
+                    error={deliveryErrors.flat}
+                  />
                   <TextField
                     label="Phone"
                     type="tel"
-                    autoComplete="tel"
-                    placeholder="+1 555 123 4567"
+                    autoComplete="shipping tel"
+                    placeholder="+44 20 7946 0000"
+                    hint="Optional — the courier calls only if they can’t find you."
                     value={delivery.phone}
                     onChange={changeDelivery("phone")}
                     error={deliveryErrors.phone}
                   />
-                  <div className={authStyles.field}>
-                    <label htmlFor="delivery-address" className={authStyles.label}>
-                      Delivery address
-                    </label>
-                    <textarea
-                      id="delivery-address"
-                      className={`${authStyles.input} checkout-form__address`}
-                      rows={3}
-                      autoComplete="street-address"
-                      placeholder="Street, house, apartment, city"
-                      value={delivery.address}
-                      onChange={changeDelivery("address")}
-                      aria-invalid={Boolean(deliveryErrors.address)}
-                      aria-describedby={deliveryErrors.address ? "delivery-address-error" : undefined}
-                    />
-                    {deliveryErrors.address && (
-                      <p id="delivery-address-error" className={authStyles.fieldError}>
-                        {deliveryErrors.address}
-                      </p>
-                    )}
-                  </div>
 
                   <button
                     type="submit"

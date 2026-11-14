@@ -131,6 +131,10 @@ export default function AdminOrders() {
 
               <dl className="admin-order__delivery">
                 <div>
+                  <dt>Name</dt>
+                  <dd>{order.full_name || "—"}</dd>
+                </div>
+                <div>
                   <dt>Phone</dt>
                   <dd>
                     {order.phone ? (

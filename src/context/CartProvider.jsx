@@ -168,7 +168,7 @@ export default function CartProvider({ children }) {
     });
   }, [userId, show, track]);
 
-  // Turns the saved basket into an order. `delivery` = { phone, address }.
+  // Turns the saved basket into an order. `delivery` = { fullName, city, street, building, flat, phone }.
   // Returns the new order id; throws if it fails (the basket is then left as it was).
   const checkout = useCallback(async (delivery) => {
     if (!userId) throw new Error("Please sign in to place an order");

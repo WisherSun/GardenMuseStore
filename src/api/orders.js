@@ -1,11 +1,18 @@
 import { supabase } from "../lib/supabase.js";
 
-// Turns the signed-in user's basket into an order with delivery details
-// (see supabase/orders-delivery.sql). Everything happens in the database in one step;
-// returns the new order id.
-export async function placeOrder({ phone, address }) {
+// Turns the signed-in user's basket into an order with the shipping address
+// (see supabase/orders-shipping-address.sql). Everything happens in the database in one step;
+// returns the new order id. `flat` and `phone` may be empty.
+export async function placeOrder({ fullName, city, street, building, flat, phone }) {
   if (!supabase) throw new Error("Supabase is not configured");
-  const { data, error } = await supabase.rpc("place_order", { p_phone: phone, p_address: address });
+  const { data, error } = await supabase.rpc("place_order", {
+    p_full_name: fullName,
+    p_city: city,
+    p_street: street,
+    p_building: building,
+    p_flat: flat || null,
+    p_phone: phone || null,
+  });
   if (error) throw error;
   return data;
 }
