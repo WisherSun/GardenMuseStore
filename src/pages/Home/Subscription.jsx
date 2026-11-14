@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import { CheckCircleIcon, FlowerIcon } from "../../components/Icons.jsx";
 import "./Subscription.css";
 
@@ -30,12 +31,9 @@ export default function Subscription() {
                 Handwritten card with every order
               </li>
             </ul>
-            <a
-              href="mailto:lenafcdk@gmail.com"
-              className="btn btn--rust btn--block"
-            >
-              Request a Bespoke Bouquet
-            </a>
+            <Link to="/bespoke" className="btn btn--rust btn--block">
+              Customise your bouquet
+            </Link>
           </div>
         </div>
       </div>

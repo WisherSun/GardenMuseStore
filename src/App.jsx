@@ -11,6 +11,7 @@ import ForgotPasswordPage from "./pages/Auth/ForgotPasswordPage.jsx";
 import ResetPasswordPage from "./pages/Auth/ResetPasswordPage.jsx";
 import AccountPage from "./pages/Account/AccountPage.jsx";
 import AdminPage from "./pages/Admin/AdminPage.jsx";
+import BespokePage from "./pages/Bespoke/BespokePage.jsx";
 import NotFoundPage from "./pages/NotFound/NotFoundPage.jsx";
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/shop" element={<ShopPage />} />
           <Route path="/cart" element={<CartPage />} />
+          <Route path="/bespoke" element={<BespokePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />

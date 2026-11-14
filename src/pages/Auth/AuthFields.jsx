@@ -38,6 +38,66 @@ export function TextField({ label, error, hint, labelExtra, ...inputProps }) {
   );
 }
 
+// Multi-line text box, same look as TextField
+export function TextAreaField({ label, error, hint, ...textareaProps }) {
+  const id = useId();
+  const messageId = `${id}-message`;
+
+  return (
+    <div className={styles.field}>
+      <label htmlFor={id} className={styles.label}>
+        {label}
+      </label>
+      <textarea
+        id={id}
+        className={`${styles.input} ${styles.textarea}`}
+        aria-invalid={Boolean(error)}
+        aria-describedby={error || hint ? messageId : undefined}
+        {...textareaProps}
+      />
+      {error ? (
+        <p id={messageId} className={styles.fieldError}>
+          {error}
+        </p>
+      ) : (
+        hint && (
+          <p id={messageId} className={styles.hint}>
+            {hint}
+          </p>
+        )
+      )}
+    </div>
+  );
+}
+
+// Dropdown, same look as TextField
+export function SelectField({ label, error, children, ...selectProps }) {
+  const id = useId();
+  const messageId = `${id}-message`;
+
+  return (
+    <div className={styles.field}>
+      <label htmlFor={id} className={styles.label}>
+        {label}
+      </label>
+      <select
+        id={id}
+        className={`${styles.input} ${styles.select}`}
+        aria-invalid={Boolean(error)}
+        aria-describedby={error ? messageId : undefined}
+        {...selectProps}
+      >
+        {children}
+      </select>
+      {error && (
+        <p id={messageId} className={styles.fieldError}>
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
+
 // Password input with a show/hide button
 export function PasswordField({ label = "Password", error, hint, labelExtra, ...inputProps }) {
   const id = useId();
