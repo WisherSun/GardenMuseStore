@@ -17,6 +17,24 @@ export async function placeOrder({ fullName, city, street, building, flat, phone
   return data;
 }
 
+// "Buy now": orders one flower straight away, the basket is left as it is
+// (see supabase/buy-now.sql). The price is taken from the database. Returns the new order id.
+export async function placeSingleOrder(flowerId, quantity, { fullName, city, street, building, flat, phone }) {
+  if (!supabase) throw new Error("Supabase is not configured");
+  const { data, error } = await supabase.rpc("place_single_order", {
+    p_flower_id: flowerId,
+    p_quantity: quantity,
+    p_full_name: fullName,
+    p_city: city,
+    p_street: street,
+    p_building: building,
+    p_flat: flat || null,
+    p_phone: phone || null,
+  });
+  if (error) throw error;
+  return data;
+}
+
 // The signed-in customer's own orders, newest first, each with its items and total.
 // Filtered by user_id on purpose: an admin may read every order, but here we only want theirs.
 export async function fetchMyOrders(userId) {

@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router";
+import { Link, useLocation, useParams } from "react-router";
 import { fetchFlowerById } from "../../api/flowers.js";
 import { useCart } from "../../hooks/useCart.js";
 import { formatPrice } from "../../lib/format.js";
-import { CheckIcon, LeafIcon } from "../../components/Icons.jsx";
+import { ArrowRightIcon, CheckIcon, LeafIcon } from "../../components/Icons.jsx";
+import BuyNowDialog from "./BuyNowDialog.jsx";
 import "./Product.css";
 
 const MAX_QUANTITY = 99;
@@ -86,13 +87,42 @@ function Gallery({ images, name }) {
   );
 }
 
+// "Add to basket" (or the quantity in the basket) + "Buy now".
+// Guests are sent to sign in first for "Buy now", then come back to this page.
 function BuyBox({ flower }) {
+  const { isGuest } = useCart();
+  const { pathname } = useLocation();
+  const [buying, setBuying] = useState(false);
+
+  return (
+    <div className="product-actions">
+      <BasketControl flower={flower} />
+
+      {isGuest ? (
+        <>
+          <Link to="/login" state={{ from: pathname }} className="btn btn--rust btn--block">
+            Buy now
+          </Link>
+          <p className="product-actions__note">You’ll be asked to sign in first.</p>
+        </>
+      ) : (
+        <button className="btn btn--rust btn--block" onClick={() => setBuying(true)}>
+          Buy now
+        </button>
+      )}
+
+      {buying && <BuyNowDialog flower={flower} onClose={() => setBuying(false)} />}
+    </div>
+  );
+}
+
+function BasketControl({ flower }) {
   const { add, lines, setQuantity } = useCart();
   const quantity = lines.find((line) => line.flowerId === flower.id)?.quantity ?? 0;
 
   if (quantity === 0) {
     return (
-      <button className="btn btn--ink btn--block product-buy__add" onClick={() => add(flower.id)}>
+      <button className="btn btn--ink btn--block" onClick={() => add(flower.id)}>
         Add to basket
       </button>
     );
@@ -155,15 +185,9 @@ export default function ProductPage() {
   return (
     <section className="product-page">
       <div className="container">
-        <nav className="product-page__crumbs" aria-label="Breadcrumb">
-          <Link to="/shop">Shop</Link>
-          {flower && (
-            <>
-              <span aria-hidden="true">/</span>
-              <span aria-current="page">{flower.name}</span>
-            </>
-          )}
-        </nav>
+        <Link to="/shop" className="product-page__back">
+          <ArrowRightIcon className="product-page__back-icon" /> Back to shop
+        </Link>
 
         {status === "loading" && <ProductSkeleton />}
 
@@ -237,6 +261,10 @@ function ProductDetails({ flower }) {
             </div>
           </div>
         )}
+
+        <Link to="/shop" className="btn btn--light product-info__continue">
+          Continue shopping
+        </Link>
       </div>
     </div>
   );
