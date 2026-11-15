@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router";
 import Header from "./components/Header.jsx";
 import Footer from "./components/Footer.jsx";
 import ScrollManager from "./components/ScrollManager.jsx";
+import GardenBackground from "./components/GardenBackground.jsx";
 import HomePage from "./pages/Home/HomePage.jsx";
 import ShopPage from "./pages/Shop/ShopPage.jsx";
 import ProductPage from "./pages/Product/ProductPage.jsx";
@@ -19,6 +20,7 @@ function App() {
   return (
     <>
       <ScrollManager />
+      <GardenBackground />
       <Header />
       <main>
         <Routes>
