@@ -39,6 +39,13 @@
       <input name="budget" />
       <textarea name="wishes"></textarea>
     </form>
+    <!-- Same for the FAQ question form on the home page (keep in sync with src/pages/Home/Faq.jsx) -->
+    <form name="question" data-netlify="true" netlify-honeypot="bot-field" hidden>
+      <input name="bot-field" />
+      <input name="name" />
+      <input name="email" />
+      <textarea name="question"></textarea>
+    </form>
 
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>

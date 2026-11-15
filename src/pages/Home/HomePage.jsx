@@ -4,6 +4,7 @@ import Products from "./Products.jsx";
 import Subscription from "./Subscription.jsx";
 import Craft from "./Craft.jsx";
 import Newsletter from "./Newsletter.jsx";
+import Faq from "./Faq.jsx";
 
 export default function HomePage() {
   return (
@@ -14,6 +15,7 @@ export default function HomePage() {
       <Subscription />
       <Craft />
       <Newsletter />
+      <Faq />
     </>
   );
 }
