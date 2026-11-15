@@ -6,12 +6,11 @@ import { useCart } from "../hooks/useCart.js";
 import { BagIcon, CloseIcon, MenuIcon, UserIcon } from "./Icons.jsx";
 import "./Header.css";
 
-// "/#section" links work from any page: they open Home and scroll to that section.
 const navLinks = [
   { label: "Shop", to: "/shop" },
-  { label: "Bespoke", to: "/#bespoke" },
-  { label: "Our Craft", to: "/#craft" },
-  { label: "Flower Care", to: "/#care" },
+  { label: "Bespoke", to: "/bespoke" },
+  { label: "Our Craft", to: "/craft" },
+  { label: "Flower Care", to: "/care" },
 ];
 
 export default function Header() {

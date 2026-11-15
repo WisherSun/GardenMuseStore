@@ -1,3 +1,5 @@
+import { Link } from "react-router";
+import { ArrowRightIcon } from "../../components/Icons.jsx";
 import "./Newsletter.css";
 
 const tips = [
@@ -19,7 +21,7 @@ const tips = [
   },
 ];
 
-// Flower care tips. Information only, no form or button.
+// Flower care tips (short version; the full list is on the /care page).
 // (File keeps its old name; the section used to be a newsletter sign-up.)
 export default function Newsletter() {
   return (
@@ -35,6 +37,9 @@ export default function Newsletter() {
               A little care goes a long way. Follow these simple steps and your flowers will
               stay fresh and beautiful for days longer.
             </p>
+            <Link to="/care" className="read-more">
+              All care tips <ArrowRightIcon />
+            </Link>
           </div>
 
           <ol className="care-tips">

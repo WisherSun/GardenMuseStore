@@ -1,6 +1,7 @@
 import studioImage from "../../assets/placeholders/studio.jpg";
 import bouquetImage from "../../assets/placeholders/bouquet.jpg";
-import { StarIcon } from "../../components/Icons.jsx";
+import { Link } from "react-router";
+import { ArrowRightIcon, StarIcon } from "../../components/Icons.jsx";
 import "./Craft.css";
 
 export default function Craft() {
@@ -15,6 +16,9 @@ export default function Craft() {
               Crafted daily in our sunlit botanical studio. We honor seasonal shifts and natural
               stem movements rather than forced perfection.
             </p>
+            <Link to="/craft" className="read-more">
+              Read our story <ArrowRightIcon />
+            </Link>
           </div>
           <div className="craft__images">
             <img

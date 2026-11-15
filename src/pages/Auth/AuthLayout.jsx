@@ -3,9 +3,10 @@ import styles from "./Auth.module.css";
 
 // Shared frame for login, sign up and password pages:
 // photo + quote on the left (desktop only), form card on the right.
-export default function AuthLayout({ eyebrow, title, subtitle, children, footer }) {
+// `titleAs="h2"` when the page already has its own main heading (h1) above.
+export default function AuthLayout({ eyebrow, title, subtitle, children, footer, titleAs: Title = "h1", id }) {
   return (
-    <section className={styles.page}>
+    <section className={styles.page} id={id}>
       <div className="container">
         <div className={styles.layout}>
           <div className={styles.visual}>
@@ -20,7 +21,7 @@ export default function AuthLayout({ eyebrow, title, subtitle, children, footer 
 
           <div className={styles.card}>
             {eyebrow && <span className="eyebrow">{eyebrow}</span>}
-            <h1 className={styles.title}>{title}</h1>
+            <Title className={styles.title}>{title}</Title>
             {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
             {children}
             {footer && <p className={styles.switchText}>{footer}</p>}

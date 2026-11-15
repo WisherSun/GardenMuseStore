@@ -40,8 +40,8 @@ const faqs = [
     q: "How do I keep my flowers fresh for longer?",
     a: (
       <>
-        Trim the stems, change the water every two days and keep the vase cool. See our{" "}
-        <a href="#care">flower care tips</a> above.
+        Trim the stems, change the water every two days and keep the vase cool. See all our{" "}
+        <Link to="/care">flower care tips</Link>.
       </>
     ),
   },

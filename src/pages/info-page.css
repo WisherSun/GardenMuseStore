@@ -1,0 +1,245 @@
+/* Shared layout for the content pages: Our Craft, Flower Care and Bespoke.
+   Each page = a centred heading at the top, then sections with step cards,
+   photo + text blocks, notes and a green "call to action" card at the end. */
+
+.info-page {
+  padding-block: 24px 64px;
+}
+
+/* Bespoke: the form section right below has its own top spacing */
+.info-page.info-page--intro {
+  padding-bottom: 0;
+}
+
+/* ---------- Page heading ---------- */
+.info-hero {
+  max-width: 720px;
+  margin: 0 auto 40px;
+  text-align: center;
+}
+
+.info-hero__title {
+  margin: 10px 0 14px;
+  font-size: clamp(36px, 10vw, 64px);
+}
+
+.info-hero__lead {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--color-text-muted);
+}
+
+.info-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+/* ---------- Sections ---------- */
+.info-section {
+  margin-top: 56px;
+}
+
+.info-section__head {
+  max-width: 640px;
+  margin: 0 auto 24px;
+  text-align: center;
+}
+
+.info-section__title {
+  margin-top: 8px;
+  font-size: clamp(28px, 7vw, 44px);
+}
+
+.info-section__lead {
+  margin-top: 10px;
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--color-text-muted);
+}
+
+/* ---------- Cards in a grid (steps, tips, services) ----------
+   Phone: one under another. Tablet: 2 per row. Desktop: 3 or 4 per row. */
+.info-grid {
+  display: grid;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 640px) {
+  .info-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .info-grid--3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .info-grid--4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.info-card {
+  padding: 24px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.info-card__number {
+  display: block;
+  margin-bottom: 6px;
+  font-family: var(--font-serif);
+  font-size: 26px;
+  font-style: italic;
+  line-height: 1.2;
+  color: var(--color-rust);
+}
+
+.info-card__icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-bottom: 12px;
+  border-radius: 50%;
+  background: var(--color-sand);
+  color: var(--color-green);
+}
+
+.info-card__icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.info-card__title {
+  font-size: 22px;
+  font-weight: 500;
+}
+
+.info-card__text {
+  margin-top: 6px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+/* ---------- Photo + text side by side (stacked on phones/tablets) ---------- */
+.info-split {
+  display: grid;
+  gap: 24px;
+  align-items: center;
+}
+
+.info-split__images {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.info-split__images img {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+}
+
+.info-split__text .info-section__title {
+  margin-bottom: 14px;
+}
+
+.info-split__text p + p {
+  margin-top: 14px;
+}
+
+.info-split__text p {
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+@media (min-width: 1024px) {
+  .info-split {
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+  }
+}
+
+/* ---------- Highlighted note (e.g. "Pet safety") ---------- */
+.info-note {
+  max-width: 760px;
+  margin: 32px auto 0;
+  padding: 18px 20px;
+  border-left: 3px solid var(--color-rust);
+  border-radius: var(--radius-sm);
+  background: var(--color-sand);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.info-note strong {
+  color: var(--color-ink);
+}
+
+/* ---------- Green card at the end of a page ---------- */
+.info-cta {
+  margin-top: 64px;
+  padding: 32px 24px;
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(120% 80% at 100% 100%, rgba(255, 255, 255, 0.07), transparent 60%),
+    var(--color-green);
+  color: #dfe7e2;
+  text-align: center;
+}
+
+.info-cta__title {
+  font-size: clamp(28px, 7vw, 42px);
+  color: #fff;
+}
+
+.info-cta__text {
+  max-width: 520px;
+  margin: 10px auto 0;
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.info-cta .info-hero__actions {
+  margin-top: 22px;
+}
+
+/* ---------- Desktop spacing ---------- */
+@media (min-width: 1024px) {
+  .info-page {
+    padding-block: 56px 112px;
+  }
+
+  .info-hero {
+    margin-bottom: 56px;
+  }
+
+  .info-hero__lead {
+    font-size: 18px;
+  }
+
+  .info-section {
+    margin-top: 96px;
+  }
+
+  .info-section__head {
+    margin-bottom: 36px;
+  }
+
+  .info-cta {
+    margin-top: 112px;
+    padding: 56px 64px;
+  }
+}

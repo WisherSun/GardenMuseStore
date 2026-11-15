@@ -212,6 +212,28 @@ ul {
   white-space: nowrap;
 }
 
+/* "Read our story →" style link (home page sections that have their own page) */
+.read-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-style: italic;
+  color: var(--color-rust);
+}
+
+.read-more svg {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s;
+}
+
+.read-more:hover svg {
+  transform: translateX(4px);
+}
+
 /* Hide scrollbars on horizontally scrolling rows (chips, tabs) */
 .no-scrollbar {
   scrollbar-width: none;
