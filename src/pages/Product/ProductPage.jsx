@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useParams } from "react-router";
 import { fetchFlowerById } from "../../api/flowers.js";
 import { useCart } from "../../hooks/useCart.js";
@@ -57,17 +57,91 @@ function splitDetails(details) {
   };
 }
 
+// Big photo you can swipe (phones), scroll with a trackpad, or move with the
+// arrows (computers with a mouse). The small photos below still work too.
+// The browser does the sliding itself with CSS "scroll-snap"; this code only
+// keeps the big photo and the highlighted small photo in step.
 function Gallery({ images, name }) {
   const [active, setActive] = useState(0);
-  const current = images[active] ?? images[0];
+  const trackRef = useRef(null);
+  const many = images.length > 1;
+
+  const goTo = (i) => {
+    const track = trackRef.current;
+    if (!track) return;
+    const index = Math.max(0, Math.min(i, images.length - 1));
+    track.scrollTo({ left: index * track.clientWidth, behavior: "smooth" });
+  };
+
+  // Which photo is showing, worked out from how far the row is scrolled
+  const handleScroll = () => {
+    const track = trackRef.current;
+    if (!track || !track.clientWidth) return;
+    setActive(Math.round(track.scrollLeft / track.clientWidth));
+  };
+
+  // Left/right arrow keys when the big photo has keyboard focus
+  const handleKey = (e) => {
+    if (e.key === "ArrowRight") {
+      e.preventDefault();
+      goTo(active + 1);
+    } else if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      goTo(active - 1);
+    }
+  };
 
   return (
     <div className="product-gallery">
       <div className="product-gallery__main">
-        <img src={current} alt={`${name}, photo ${active + 1} of ${images.length}`} />
+        <div
+          ref={trackRef}
+          className="product-gallery__track no-scrollbar"
+          onScroll={many ? handleScroll : undefined}
+          onKeyDown={many ? handleKey : undefined}
+          tabIndex={many ? 0 : undefined}
+          role={many ? "region" : undefined}
+          aria-label={many ? `${name} photos, use arrow keys to browse` : undefined}
+        >
+          {images.map((src, i) => (
+            <img
+              key={src}
+              src={src}
+              alt={`${name}, photo ${i + 1} of ${images.length}`}
+              loading={i === 0 ? "eager" : "lazy"}
+              draggable="false"
+            />
+          ))}
+        </div>
+
+        {many && (
+          <>
+            <button
+              type="button"
+              className="product-gallery__arrow product-gallery__arrow--prev"
+              aria-label="Previous photo"
+              onClick={() => goTo(active - 1)}
+              disabled={active === 0}
+            >
+              <ArrowRightIcon />
+            </button>
+            <button
+              type="button"
+              className="product-gallery__arrow product-gallery__arrow--next"
+              aria-label="Next photo"
+              onClick={() => goTo(active + 1)}
+              disabled={active === images.length - 1}
+            >
+              <ArrowRightIcon />
+            </button>
+            <span className="product-gallery__count" aria-hidden="true">
+              {active + 1} / {images.length}
+            </span>
+          </>
+        )}
       </div>
 
-      {images.length > 1 && (
+      {many && (
         <div className="product-gallery__thumbs" role="group" aria-label="Choose a photo">
           {images.map((src, i) => (
             <button
@@ -76,7 +150,7 @@ function Gallery({ images, name }) {
               className={`product-gallery__thumb ${i === active ? "is-active" : ""}`}
               aria-pressed={i === active}
               aria-label={`Show photo ${i + 1}`}
-              onClick={() => setActive(i)}
+              onClick={() => goTo(i)}
             >
               <img src={src} alt="" loading="lazy" />
             </button>
@@ -221,7 +295,7 @@ function ProductDetails({ flower }) {
 
   return (
     <div className="product-layout">
-      <Gallery images={flower.images} name={flower.name} />
+      <Gallery key={flower.id} images={flower.images} name={flower.name} />
 
       <div className="product-info">
         {onSale && <span className="product-info__badge">Sale</span>}

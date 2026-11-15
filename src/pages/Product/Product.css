@@ -59,16 +59,97 @@
 }
 
 .product-gallery__main {
+  position: relative;
   aspect-ratio: 4 / 5;
   border-radius: var(--radius-md);
   overflow: hidden;
   background: var(--color-sand);
 }
 
-.product-gallery__main img {
+/* All photos in one row; each fills the frame and the row "snaps" to one photo */
+.product-gallery__track {
+  display: flex;
+  height: 100%;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain; /* a sideways swipe doesn't trigger "back" in the browser */
+}
+
+.product-gallery__track:focus-visible {
+  outline-offset: -3px;
+}
+
+.product-gallery__track img {
+  flex: 0 0 100%;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  scroll-snap-align: start;
+  scroll-snap-stop: always; /* one photo per swipe, even a fast one */
+  user-select: none;
+}
+
+/* Round arrow buttons over the photo. Only on computers with a mouse:
+   on touch screens people swipe, and buttons would cover the photo. */
+.product-gallery__arrow {
+  position: absolute;
+  top: 50%;
+  display: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.88);
+  color: var(--color-ink);
+  box-shadow: 0 4px 14px rgba(13, 40, 33, 0.12);
+  transform: translateY(-50%);
+  transition: opacity 0.2s, background-color 0.2s;
+}
+
+.product-gallery__arrow svg {
+  width: 18px;
+  height: 18px;
+}
+
+.product-gallery__arrow--prev {
+  left: 12px;
+}
+
+.product-gallery__arrow--prev svg {
+  transform: rotate(180deg);
+}
+
+.product-gallery__arrow--next {
+  right: 12px;
+}
+
+.product-gallery__arrow:hover {
+  background: #fff;
+}
+
+.product-gallery__arrow:disabled {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .product-gallery__arrow {
+    display: grid;
+  }
+}
+
+/* "2 / 4" in the corner */
+.product-gallery__count {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(13, 40, 33, 0.55);
+  color: #fff;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  pointer-events: none;
 }
 
 .product-gallery__thumbs {
