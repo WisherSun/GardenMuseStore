@@ -3,7 +3,8 @@ import { supabase } from "../lib/supabase.js";
 // Turns the signed-in user's basket into an order with the shipping address
 // (see supabase/orders-shipping-address.sql). Everything happens in the database in one step;
 // returns the new order id. `flat` and `phone` may be empty.
-export async function placeOrder({ fullName, city, street, building, flat, phone }) {
+// The delivery date and time slot are optional (see supabase/orders-delivery-time.sql).
+export async function placeOrder({ fullName, city, street, building, flat, phone, deliveryDate, deliverySlot }) {
   if (!supabase) throw new Error("Supabase is not configured");
   const { data, error } = await supabase.rpc("place_order", {
     p_full_name: fullName,
@@ -12,6 +13,8 @@ export async function placeOrder({ fullName, city, street, building, flat, phone
     p_building: building,
     p_flat: flat || null,
     p_phone: phone || null,
+    p_delivery_date: deliveryDate || null,
+    p_delivery_slot: deliverySlot || null,
   });
   if (error) throw error;
   return data;
@@ -19,7 +22,11 @@ export async function placeOrder({ fullName, city, street, building, flat, phone
 
 // "Buy now": orders one flower straight away, the basket is left as it is
 // (see supabase/buy-now.sql). The price is taken from the database. Returns the new order id.
-export async function placeSingleOrder(flowerId, quantity, { fullName, city, street, building, flat, phone }) {
+export async function placeSingleOrder(
+  flowerId,
+  quantity,
+  { fullName, city, street, building, flat, phone, deliveryDate, deliverySlot },
+) {
   if (!supabase) throw new Error("Supabase is not configured");
   const { data, error } = await supabase.rpc("place_single_order", {
     p_flower_id: flowerId,
@@ -30,6 +37,8 @@ export async function placeSingleOrder(flowerId, quantity, { fullName, city, str
     p_building: building,
     p_flat: flat || null,
     p_phone: phone || null,
+    p_delivery_date: deliveryDate || null,
+    p_delivery_slot: deliverySlot || null,
   });
   if (error) throw error;
   return data;
@@ -42,7 +51,7 @@ export async function fetchMyOrders(userId) {
 
   const { data: orders, error } = await supabase
     .from("orders")
-    .select("id, created_at, status, address")
+    .select("id, created_at, status, address, delivery_date, delivery_slot")
     .eq("user_id", userId)
     .order("created_at", { ascending: false });
   if (error) throw error;

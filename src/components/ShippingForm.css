@@ -10,6 +10,24 @@
   font-size: 20px;
 }
 
+/* Date + time: under each other on phones, side by side from 640px */
+.checkout-form__row {
+  display: grid;
+  gap: 14px;
+}
+
+@media (min-width: 640px) {
+  .checkout-form__row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+}
+
+.checkout-form select:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 .checkout-form .btn:disabled {
   opacity: 0.55;
   cursor: not-allowed;

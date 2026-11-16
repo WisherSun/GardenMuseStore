@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { fetchMyOrders } from "../../api/orders.js";
 import { formatPrice } from "../../lib/format.js";
+import { formatDelivery } from "../../lib/delivery.js";
 import "./MyOrders.css";
 
 // Wording for customers (the admin panel says "New" instead of "Received")
@@ -95,6 +96,19 @@ export default function MyOrders({ userId }) {
                 <span>Total</span>
                 <span>{formatPrice(order.total)}</span>
               </p>
+
+              {/* Once the shop confirms the order, the customer sees when it will arrive.
+                  No date chosen = soonest delivery, so we just say it's on its way. */}
+              {order.status === "confirmed" && (
+                <p className="my-order__delivery-time">
+                  {order.delivery_date
+                    ? `Delivery: ${formatDelivery(order.delivery_date, order.delivery_slot)}`
+                    : "Your flowers are already on their way."}
+                </p>
+              )}
+              {order.status === "delivered" && (
+                <p className="my-order__delivery-time">Your flowers have been delivered. Enjoy!</p>
+              )}
             </li>
           ))}
         </ul>

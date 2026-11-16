@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { TextField } from "../pages/Auth/AuthFields.jsx";
+import { SelectField, TextField } from "../pages/Auth/AuthFields.jsx";
+import { deliveryDateRange, formatDeliveryDate, slotLabel, slotsForDate } from "../lib/delivery.js";
 import "./ShippingForm.css";
 
 // Shipping address form used by the basket and by "Buy now" on the flower page.
@@ -9,7 +10,16 @@ import "./ShippingForm.css";
 // Same rules as in the database (supabase/orders-shipping-address.sql)
 const PHONE_PATTERN = /^\+?[0-9 ()-]{6,20}$/;
 
-const EMPTY_DELIVERY = { fullName: "", city: "", street: "", building: "", flat: "", phone: "" };
+const EMPTY_DELIVERY = {
+  fullName: "",
+  city: "",
+  street: "",
+  building: "",
+  flat: "",
+  phone: "",
+  deliveryDate: "", // "YYYY-MM-DD", empty = as soon as possible
+  deliverySlot: "", // "morning" | "afternoon" | "evening", empty = any time
+};
 
 function validateDelivery(d) {
   const errors = {};
@@ -33,6 +43,15 @@ function validateDelivery(d) {
   if (d.phone.trim() && !PHONE_PATTERN.test(d.phone.trim()))
     errors.phone = "Enter a phone number, e.g. +1 555 123 4567.";
 
+  // Delivery date is optional; if chosen it must be from today up to a year ahead
+  if (d.deliveryDate) {
+    const { min, max } = deliveryDateRange();
+    if (d.deliveryDate < min || d.deliveryDate > max)
+      errors.deliveryDate = `Choose a date from ${formatDeliveryDate(min)} to ${formatDeliveryDate(max)}.`;
+    else if (d.deliverySlot && !slotsForDate(d.deliveryDate).some((s) => s.value === d.deliverySlot))
+      errors.deliverySlot = "This time has already passed today. Choose a later one.";
+  }
+
   return errors;
 }
 
@@ -44,6 +63,8 @@ function orderErrorMessage(err) {
   if (message.includes("no longer available")) return "Sorry, this flower is no longer available.";
   if (message.includes("quantity")) return "Please choose a quantity from 1 to 99.";
   if (message.includes("place_single_order")) return "“Buy now” isn’t set up yet. Please use the basket for now.";
+  if (message.includes("already passed")) return "That delivery time has already passed. Please choose a later one.";
+  if (message.includes("delivery")) return "Please check the delivery date and time.";
   if (message.includes("phone number")) return "Please enter a valid phone number.";
   if (message.includes("recipient name")) return "Please enter the recipient’s name.";
   if (message.includes("city")) return "Please enter the city.";
@@ -63,6 +84,20 @@ export default function ShippingForm({ onSubmit, disabled = false, submitLabel =
     setDelivery((d) => ({ ...d, [field]: e.target.value }));
     setErrors((errs) => ({ ...errs, [field]: undefined }));
   };
+
+  // A new date can make the chosen slot impossible (e.g. "Morning" for today in the
+  // afternoon), and no date means no slot: then the slot goes back to "Any time".
+  const changeDate = (e) => {
+    const date = e.target.value;
+    setDelivery((d) => {
+      const slotStillOk = date && slotsForDate(date).some((s) => s.value === d.deliverySlot);
+      return { ...d, deliveryDate: date, deliverySlot: slotStillOk ? d.deliverySlot : "" };
+    });
+    setErrors((errs) => ({ ...errs, deliveryDate: undefined, deliverySlot: undefined }));
+  };
+
+  const dateRange = deliveryDateRange();
+  const slots = delivery.deliveryDate ? slotsForDate(delivery.deliveryDate) : [];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -140,6 +175,34 @@ export default function ShippingForm({ onSubmit, disabled = false, submitLabel =
         onChange={change("phone")}
         error={errors.phone}
       />
+
+      {/* Optional: when the flowers are needed */}
+      <div className="checkout-form__row">
+        <TextField
+          label="Date needed"
+          type="date"
+          min={dateRange.min}
+          max={dateRange.max}
+          hint="Optional — leave empty for the soonest delivery."
+          value={delivery.deliveryDate}
+          onChange={changeDate}
+          error={errors.deliveryDate}
+        />
+        <SelectField
+          label="Time"
+          value={delivery.deliverySlot}
+          onChange={change("deliverySlot")}
+          disabled={!delivery.deliveryDate}
+          error={errors.deliverySlot}
+        >
+          <option value="">Any time</option>
+          {slots.map((slot) => (
+            <option key={slot.value} value={slot.value}>
+              {slotLabel(slot)}
+            </option>
+          ))}
+        </SelectField>
+      </div>
 
       <button
         type="submit"

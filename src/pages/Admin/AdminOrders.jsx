@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { ORDER_STATUSES, fetchOrdersForAdmin, updateOrderStatus } from "../../api/admin.js";
 import { formatPrice } from "../../lib/format.js";
+import { formatDelivery } from "../../lib/delivery.js";
 
 const statusLabels = {
   new: "New",
@@ -147,6 +148,10 @@ export default function AdminOrders() {
                 <div>
                   <dt>Address</dt>
                   <dd>{order.address || "—"}</dd>
+                </div>
+                <div>
+                  <dt>Delivery</dt>
+                  <dd>{formatDelivery(order.delivery_date, order.delivery_slot) ?? "Soonest possible"}</dd>
                 </div>
               </dl>
 
