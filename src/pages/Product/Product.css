@@ -11,7 +11,8 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  min-height: 44px; /* big enough to tap comfortably on a phone */
+  min-height: 44px;
+  /* big enough to tap comfortably on a phone */
   margin-bottom: 12px;
   font-size: 12px;
   font-weight: 600;
@@ -54,7 +55,8 @@
   display: grid;
   gap: 10px;
   width: 100%;
-  max-width: 560px; /* keeps the photo from getting very tall on tablets */
+  max-width: 560px;
+  /* keeps the photo from getting very tall on tablets */
   margin-inline: auto;
 }
 
@@ -72,7 +74,8 @@
   height: 100%;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
-  overscroll-behavior-x: contain; /* a sideways swipe doesn't trigger "back" in the browser */
+  overscroll-behavior-x: contain;
+  /* a sideways swipe doesn't trigger "back" in the browser */
 }
 
 .product-gallery__track:focus-visible {
@@ -85,7 +88,8 @@
   height: 100%;
   object-fit: cover;
   scroll-snap-align: start;
-  scroll-snap-stop: always; /* one photo per swipe, even a fast one */
+  scroll-snap-stop: always;
+  /* one photo per swipe, even a fast one */
   user-select: none;
 }
 
@@ -264,7 +268,7 @@
 .product-delivery__text {
   font-family: var(--font-serif);
   font-size: 20px;
-  line-height: 1.4;
+  line-height: 1.1;
   color: var(--color-ink);
 }
 
@@ -538,5 +542,190 @@
 @media (min-width: 640px) {
   .buy-dialog__inner {
     padding: 32px;
+  }
+}
+/* ---------- Zoom: open the big photo full screen ---------- */
+.product-gallery__track img {
+  cursor: zoom-in;
+}
+
+/* Round magnifier button in the top-right corner of the big photo */
+.product-gallery__zoom {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.88);
+  color: var(--color-ink);
+  box-shadow: 0 4px 14px rgba(13, 40, 33, 0.12);
+}
+
+.product-gallery__zoom:hover {
+  background: #fff;
+}
+
+.product-gallery__zoom svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Full-screen viewer (ImageViewer.jsx) */
+.viewer {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  background: rgba(12, 24, 20, 0.96);
+  color: #fff;
+}
+
+.viewer[open] {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.viewer::backdrop {
+  background: transparent;
+}
+
+.viewer__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+}
+
+.viewer__count {
+  padding-left: 6px;
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.viewer__tools {
+  display: flex;
+  gap: 8px;
+}
+
+.viewer__btn,
+.viewer__arrow {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  transition: background-color 0.2s;
+}
+
+.viewer__btn:hover,
+.viewer__arrow:hover,
+.viewer__btn[aria-pressed="true"] {
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.viewer__btn svg,
+.viewer__arrow svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* The photo area. Whole photo fits on screen; sideways finger swipes come to our code
+   (pan-y), while pinch-zoom is still left to the browser. */
+.viewer__stage {
+  display: flex;
+  min-height: 0;
+  padding: 0 12px 16px;
+  overflow: hidden;
+  touch-action: pan-y pinch-zoom;
+}
+
+/* margin: auto centres the photo, but never cuts it off when it's bigger than the screen */
+.viewer__stage img {
+  flex: none;
+  max-width: 100%;
+  max-height: 100%;
+  margin: auto;
+  object-fit: contain;
+  user-select: none;
+  cursor: zoom-in;
+}
+
+/* Zoomed in: the photo is bigger than the screen and can be moved around */
+.viewer__stage.is-zoomed {
+  padding: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  touch-action: auto;
+  scrollbar-width: none;
+  cursor: grab;
+}
+
+.viewer__stage.is-zoomed::-webkit-scrollbar {
+  display: none;
+}
+
+.viewer__stage.is-zoomed img {
+  max-width: none;
+  max-height: none;
+  cursor: grab;
+}
+
+.viewer__stage.is-zoomed:active,
+.viewer__stage.is-zoomed:active img {
+  cursor: grabbing;
+}
+
+.viewer__arrow {
+  position: absolute;
+  top: 50%;
+  translate: 0 -50%;
+}
+
+.viewer__arrow--prev {
+  left: 12px;
+}
+
+.viewer__arrow--prev svg {
+  transform: rotate(180deg);
+}
+
+.viewer__arrow--next {
+  right: 12px;
+}
+
+@media (min-width: 1024px) {
+  .viewer__bar {
+    padding: 16px 20px;
+  }
+
+  .viewer__stage {
+    padding: 0 88px 24px; /* room for the arrows on the sides */
+  }
+
+  .viewer__arrow {
+    left: auto;
+    width: 52px;
+    height: 52px;
+  }
+
+  .viewer__arrow--prev {
+    left: 24px;
+  }
+
+  .viewer__arrow--next {
+    right: 24px;
   }
 }

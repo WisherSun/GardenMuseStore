@@ -8,9 +8,11 @@ import {
   ArrowRightIcon,
   CheckIcon,
   LeafIcon,
+  SearchIcon,
   TruckIcon,
 } from "../../components/Icons.jsx";
 import BuyNowDialog from "./BuyNowDialog.jsx";
+import ImageViewer from "./ImageViewer.jsx";
 import "./Product.css";
 
 const MAX_QUANTITY = 99;
@@ -68,10 +70,19 @@ function splitDetails(details) {
 // arrows (computers with a mouse). The small photos below still work too.
 // The browser does the sliding itself with CSS "scroll-snap"; this code only
 // keeps the big photo and the highlighted small photo in step.
+// A click / tap on the big photo (or the magnifier button) opens it full screen to zoom.
 function Gallery({ images, name }) {
   const [active, setActive] = useState(0);
+  const [viewerIndex, setViewerIndex] = useState(null); // null = full-screen viewer closed
   const trackRef = useRef(null);
   const many = images.length > 1;
+
+  // Back from full screen: show the photo the customer was last looking at there
+  const closeViewer = (index) => {
+    setViewerIndex(null);
+    const track = trackRef.current;
+    if (track) track.scrollTo({ left: index * track.clientWidth });
+  };
 
   const goTo = (i) => {
     const track = trackRef.current;
@@ -119,9 +130,20 @@ function Gallery({ images, name }) {
               alt={`${name}, photo ${i + 1} of ${images.length}`}
               loading={i === 0 ? "eager" : "lazy"}
               draggable="false"
+              onClick={() => setViewerIndex(i)}
             />
           ))}
         </div>
+
+        {/* Same as clicking the photo, but reachable with the keyboard too */}
+        <button
+          type="button"
+          className="product-gallery__zoom"
+          aria-label="Open photo full screen to zoom"
+          onClick={() => setViewerIndex(active)}
+        >
+          <SearchIcon />
+        </button>
 
         {many && (
           <>
@@ -169,6 +191,10 @@ function Gallery({ images, name }) {
             </button>
           ))}
         </div>
+      )}
+
+      {viewerIndex !== null && (
+        <ImageViewer images={images} name={name} startIndex={viewerIndex} onClose={closeViewer} />
       )}
     </div>
   );
