@@ -748,3 +748,73 @@
     right: 24px;
   }
 }
+
+/* ---------- Colour choice (flowers sold in several colours) ---------- */
+.color-picker {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.color-picker__legend {
+  margin-bottom: 10px;
+  padding: 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.color-picker__legend span {
+  color: var(--color-ink);
+}
+
+.color-picker__options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Each colour is a real radio button (keyboard and screen readers work as usual),
+   drawn as a pill with the colour name. */
+.color-picker__option {
+  position: relative;
+  cursor: pointer;
+}
+
+.color-picker__option input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.color-picker__option span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px; /* big enough to tap comfortably */
+  padding: 0 18px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface);
+  font-size: 14px;
+  color: var(--color-ink);
+  transition: border-color 0.2s, background-color 0.2s, color 0.2s;
+}
+
+.color-picker__option:hover span {
+  border-color: var(--color-ink);
+}
+
+.color-picker__option input:checked + span {
+  border-color: var(--color-ink);
+  background: var(--color-ink);
+  color: #fff;
+}
+
+.color-picker__option input:focus-visible + span {
+  outline: 2px solid var(--color-rust);
+  outline-offset: 2px;
+}

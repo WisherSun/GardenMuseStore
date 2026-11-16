@@ -69,6 +69,7 @@ export default function BuyNowDialog({ flower, onClose }) {
               <img className="buy-dialog__image" src={flower.image} alt="" />
               <div className="buy-dialog__item-info">
                 <p className="buy-dialog__name">{flower.name}</p>
+                {flower.color && <p className="buy-dialog__unit">Colour: {flower.color}</p>}
                 <p className="buy-dialog__unit">{formatPrice(unitPrice)} each</p>
                 <div className="product-buy__stepper buy-dialog__stepper" role="group" aria-label="Quantity">
                   <button

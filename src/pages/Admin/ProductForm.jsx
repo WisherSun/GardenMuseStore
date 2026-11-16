@@ -12,6 +12,7 @@ const isLink = (value) => /^https?:\/\/\S+$/i.test(value.trim());
 function toForm(product) {
   return {
     name: product?.name ?? "",
+    color: product?.color ?? "",
     description: product?.description ?? "",
     price: product?.price != null ? String(product.price) : "",
     discount: Boolean(product?.discount),
@@ -48,6 +49,7 @@ function validate(form) {
   const newPrice = Number(form.newPrice);
 
   if (!form.name.trim()) errors.name = "Enter a name.";
+  if (form.color.trim().length > 40) errors.color = "Too long (40 characters max).";
   if (!form.price.trim() || !(price > 0)) errors.price = "Enter a price above 0.";
   if (form.discount) {
     if (!form.newPrice.trim() || !(newPrice > 0)) errors.newPrice = "Enter the sale price.";
@@ -92,6 +94,7 @@ export default function ProductForm({ product, onCancel, onSaved }) {
 
     const fields = {
       name: form.name.trim(),
+      color: form.color.trim() || null, // empty = sold in one colour only
       description: form.description.trim(),
       price: Number(form.price),
       discount: form.discount,
@@ -139,6 +142,16 @@ export default function ProductForm({ product, onCancel, onSaved }) {
         {saveError && <FormAlert>{saveError}</FormAlert>}
 
         <TextField label="Name" value={form.name} onChange={set("name")} error={errors.name} autoFocus />
+
+        <TextField
+          label="Colour (optional)"
+          placeholder="e.g. Pink"
+          maxLength={40}
+          value={form.color}
+          onChange={set("color")}
+          error={errors.color}
+          hint="Only for flowers sold in several colours: add each colour as its own product with exactly the same name, and give every one of them a colour (the first one too)."
+        />
 
         <div className={authStyles.field}>
           <label htmlFor={descriptionId} className={authStyles.label}>

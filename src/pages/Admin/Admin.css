@@ -221,6 +221,11 @@
   text-transform: uppercase;
 }
 
+.admin-badge--color {
+  background: var(--color-sand);
+  color: var(--color-ink);
+}
+
 .admin-badge--sale {
   background: var(--color-rust);
   color: #fff;

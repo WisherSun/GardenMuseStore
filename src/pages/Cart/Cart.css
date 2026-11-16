@@ -83,6 +83,11 @@
   line-height: 1.2;
 }
 
+.cart-item__color {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
 .cart-item__price {
   font-size: 14px;
   color: var(--color-text-muted);

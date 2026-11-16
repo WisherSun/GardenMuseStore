@@ -75,6 +75,7 @@ function CartItem({ product, quantity, onChange, onRemove }) {
 
       <div className="cart-item__info">
         <h3 className="cart-item__name">{product.name}</h3>
+        {product.color && <p className="cart-item__color">Colour: {product.color}</p>}
         <p className="cart-item__price">
           {onSale ? (
             <>

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useLocation, useParams } from "react-router";
+import { Link, useLocation, useNavigate, useParams } from "react-router";
 import { fetchFlowerById } from "../../api/flowers.js";
 import { useCart } from "../../hooks/useCart.js";
 import { formatPrice } from "../../lib/format.js";
@@ -25,7 +25,15 @@ function useFlower(id) {
   const [attempt, setAttempt] = useState(0);
 
   // Going from one flower page to another: show "loading" again instead of the old flower.
-  if (state.id !== id) setState({ status: "loading", flower: null, id });
+  // Switching to another colour of the same flower: its data is already here, show it at once.
+  if (state.id !== id) {
+    const sameFlowerColor = state.flower?.colors?.find((c) => String(c.id) === id);
+    setState(
+      sameFlowerColor
+        ? { status: "success", flower: { ...sameFlowerColor, colors: state.flower.colors }, id }
+        : { status: "loading", flower: null, id },
+    );
+  }
 
   useEffect(() => {
     if (!validId) return;
@@ -414,6 +422,39 @@ export default function ProductPage() {
   );
 }
 
+// Colour choice for flowers sold in several colours. Each colour is its own flower row
+// with its own page, so choosing a colour opens that page (/shop/11 -> /shop/21):
+// photos, price and "Add to basket" all switch to that colour.
+// `keepScroll` tells ScrollManager not to jump to the top of the page.
+function ColorPicker({ flower }) {
+  const navigate = useNavigate();
+  if (!flower.colors || flower.colors.length < 2) return null;
+
+  return (
+    <fieldset className="color-picker">
+      <legend className="color-picker__legend">
+        Colour: <span>{flower.color}</span>
+      </legend>
+      <div className="color-picker__options">
+        {flower.colors.map((option) => (
+          <label key={option.id} className="color-picker__option">
+            <input
+              type="radio"
+              name="flower-color"
+              value={option.id}
+              checked={option.id === flower.id}
+              onChange={() =>
+                navigate(`/shop/${option.id}`, { replace: true, state: { keepScroll: true } })
+              }
+            />
+            <span>{option.color}</span>
+          </label>
+        ))}
+      </div>
+    </fieldset>
+  );
+}
+
 function ProductDetails({ flower }) {
   const onSale = flower.salePrice != null;
   const { about, care } = splitDetails(flower.details);
@@ -445,6 +486,8 @@ function ProductDetails({ flower }) {
         {flower.description && (
           <p className="product-info__lead">{flower.description}</p>
         )}
+
+        <ColorPicker flower={flower} />
 
         <BuyBox flower={flower} />
 

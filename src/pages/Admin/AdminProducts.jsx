@@ -117,7 +117,8 @@ export default function AdminProducts() {
                     <div className="admin-product__info">
                       <h3 className="admin-product__name">
                         {row.name}
-                        {onSale && <span className="admin-badge admin-badge--sale">Sale</span>}
+                        {row.color && <span className="admin-badge admin-badge--color">{row.color}</span>}
+                        {onSale &&<span className="admin-badge admin-badge--sale">Sale</span>}
                       </h3>
                       <p className="admin-product__desc">{row.description}</p>
                       <p className="admin-product__price">
