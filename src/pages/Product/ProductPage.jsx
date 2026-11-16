@@ -3,7 +3,8 @@ import { Link, useLocation, useParams } from "react-router";
 import { fetchFlowerById } from "../../api/flowers.js";
 import { useCart } from "../../hooks/useCart.js";
 import { formatPrice } from "../../lib/format.js";
-import { ArrowRightIcon, CheckIcon, LeafIcon } from "../../components/Icons.jsx";
+import { formatShortDate, productDeliveryWindow } from "../../lib/delivery.js";
+import { ArrowRightIcon, CheckIcon, LeafIcon, TruckIcon } from "../../components/Icons.jsx";
 import BuyNowDialog from "./BuyNowDialog.jsx";
 import "./Product.css";
 
@@ -227,6 +228,29 @@ function BasketControl({ flower }) {
   );
 }
 
+// When this flower can be delivered: from today if it's before 1 pm (London time),
+// otherwise from tomorrow, and for one more week after that.
+function DeliveryNote() {
+  const { sameDay, from, to } = productDeliveryWindow();
+
+  return (
+    <div className="product-delivery">
+      <span className="product-delivery__badge">
+        <TruckIcon className="product-delivery__icon" />
+      </span>
+      <div>
+        <p className="product-delivery__text">
+          We can deliver these flowers from <strong>{sameDay ? "today" : "tomorrow"}</strong>,{" "}
+          <strong>{formatShortDate(from)}</strong>, until <strong>{formatShortDate(to)}</strong>.
+        </p>
+        <p className="product-delivery__hint">
+          {sameDay ? "Order before 1 pm for delivery today." : "Orders after 1 pm are delivered from tomorrow."}
+        </p>
+      </div>
+    </div>
+  );
+}
+
 function ProductSkeleton() {
   return (
     <div className="product-layout" aria-busy="true" aria-label="Loading flower">
@@ -318,6 +342,8 @@ function ProductDetails({ flower }) {
         {flower.description && <p className="product-info__lead">{flower.description}</p>}
 
         <BuyBox flower={flower} />
+
+        <DeliveryNote />
 
         {about && (
           <div className="product-info__section">

@@ -231,6 +231,54 @@
   color: var(--color-text);
 }
 
+/* "We can deliver this from today ..." under the buy buttons */
+/* Soft card with the truck in a round badge, same family as the "Care tips" box */
+.product-delivery {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 16px;
+  align-items: center;
+  padding: 18px 20px;
+  border: 1px solid #efe6dc;
+  border-left: 4px solid var(--color-rust);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-soft);
+}
+
+.product-delivery__badge {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--color-surface);
+  box-shadow: 0 2px 8px rgba(13, 40, 33, 0.08);
+}
+
+.product-delivery__icon {
+  width: 24px;
+  height: 24px;
+  color: var(--color-rust);
+}
+
+.product-delivery__text {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  line-height: 1.4;
+  color: var(--color-ink);
+}
+
+.product-delivery__text strong {
+  font-weight: 600;
+  color: var(--color-rust);
+}
+
+.product-delivery__hint {
+  margin-top: 4px;
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
 .product-info__section {
   padding-top: 20px;
   border-top: 1px solid var(--color-border);

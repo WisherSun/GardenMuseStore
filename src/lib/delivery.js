@@ -53,7 +53,26 @@ export function slotsForDate(isoDate) {
   return DELIVERY_SLOTS.filter((slot) => slot.endHour > hour);
 }
 
-export const slotLabel = (slot) => `${slot.name} (${slot.time})`;
+// Product page note: orders before 1 pm (London) can arrive today, later ones from
+// tomorrow, and either way up to one week after that first day.
+const SAME_DAY_CUTOFF_HOUR = 13;
+
+export function productDeliveryWindow() {
+  const { today, hour } = londonNow();
+  const sameDay = hour < SAME_DAY_CUTOFF_HOUR;
+  const from = sameDay ? today : addDays(today, 1);
+  return { sameDay, from, to: addDays(from, 7) };
+}
+
+// Short date for notes, e.g. "Mon 16 Nov"
+export const formatShortDate = (isoDate) =>
+  new Date(`${isoDate}T00:00:00`).toLocaleDateString("en-GB", {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+  });
+
+export const slotLabel =(slot) => `${slot.name} (${slot.time})`;
 
 export const formatDeliveryDate = (isoDate) =>
   new Date(`${isoDate}T00:00:00`).toLocaleDateString("en-GB", {
