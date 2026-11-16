@@ -69,24 +69,35 @@
 
 /* ---------- Product slider ----------
    One row of cards that scrolls sideways and "snaps" so a card always lines up
-   with the left edge. Part of the next card shows, so people can see there is more.
-   Phone: ~1.2 cards visible. Tablet: ~2.2. Desktop: 4. */
+   with the left edge. The dots underneath show there is more to swipe.
+   Phone: 1 card. Tablet: 2. Desktop: 4. */
 .product-slider__track {
   --slide-gap: 16px;
   display: flex;
   gap: var(--slide-gap);
-  margin: -8px calc(var(--gutter) * -1) 0; /* reach the screen edges on phones/tablets */
-  padding: 8px var(--gutter) 12px; /* room so card shadows and the hover lift aren't cut off */
+  /* The row is only 8px wider than the page content on each side: enough room
+     for card shadows and the hover lift, but too little for the next card to peek in. */
+  margin: -8px -8px 0;
+  padding: 8px 8px 12px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
-  scroll-padding-inline: var(--gutter);
+  scroll-padding-inline: 8px;
   overscroll-behavior-x: contain; /* a sideways swipe doesn't trigger "back" in the browser */
   list-style: none;
 }
 
+/* Only whole cards are shown, no half card at the edge.
+   Phones: 1 card fills the row. The next card starts just past the screen edge. */
 .product-slider__track > * {
-  flex: 0 0 80%;
+  flex: 0 0 100%;
   scroll-snap-align: start;
+}
+
+/* Tablets: 2 cards side by side */
+@media (min-width: 640px) {
+  .product-slider__track > * {
+    flex-basis: calc((100% - var(--slide-gap)) / 2);
+  }
 }
 
 .product-slider__slide {
@@ -97,18 +108,9 @@
   flex: 1;
 }
 
-@media (min-width: 640px) {
-  .product-slider__track > * {
-    flex-basis: calc((100% - 2 * var(--slide-gap)) / 2.2);
-  }
-}
-
 @media (min-width: 1024px) {
   .product-slider__track {
     --slide-gap: 20px;
-    margin-inline: -8px; /* desktop: cards line up with the heading, no edge peek */
-    padding-inline: 8px;
-    scroll-padding-inline: 8px;
   }
 
   .product-slider__track > * {
