@@ -71,10 +71,18 @@ function CartItem({ product, quantity, onChange, onRemove }) {
 
   return (
     <li className="cart-item">
-      <img className="cart-item__image" src={product.image} alt="" />
+      {/* Photo and name both open the flower's page (in the colour that's in the basket).
+          The photo link is skipped by keyboard and screen readers: the name link says the same. */}
+      <Link to={`/shop/${product.id}`} className="cart-item__image-link" tabIndex={-1} aria-hidden="true">
+        <img className="cart-item__image" src={product.image} alt="" />
+      </Link>
 
       <div className="cart-item__info">
-        <h3 className="cart-item__name">{product.name}</h3>
+        <h3 className="cart-item__name">
+          <Link to={`/shop/${product.id}`} className="cart-item__link">
+            {product.name}
+          </Link>
+        </h3>
         {product.color && <p className="cart-item__color">Colour: {product.color}</p>}
         <p className="cart-item__price">
           {onSale ? (

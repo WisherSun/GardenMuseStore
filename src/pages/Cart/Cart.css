@@ -83,6 +83,34 @@
   line-height: 1.2;
 }
 
+/* Photo and name lead to the flower page */
+.cart-item__image-link {
+  display: block;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.cart-item__image-link .cart-item__image {
+  transition: transform 0.4s, opacity 0.2s;
+}
+
+.cart-item__image-link:hover .cart-item__image {
+  opacity: 0.9;
+}
+
+.cart-item__link {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 3px;
+  transition: text-decoration-color 0.2s;
+}
+
+.cart-item__link:hover,
+.cart-item__link:focus-visible {
+  text-decoration-color: currentColor;
+}
+
 .cart-item__color {
   font-size: 13px;
   color: var(--color-text-muted);
