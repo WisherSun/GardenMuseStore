@@ -6,8 +6,10 @@
   --color-sand: #f0ede9;
   --color-border: #e9e4dc;
 
-  --color-ink: #0d2821; /* darkest green: text, dark buttons */
-  --color-green: #243e36; /* subscription card, hero button */
+  --color-ink: #0d2821;
+  /* darkest green: text, dark buttons */
+  --color-green: #243e36;
+  /* subscription card, hero button */
   --color-green-deep: #1b352d;
   --color-sage: #a9c2b7;
   --color-rust: #96472f;
@@ -171,6 +173,7 @@ ul {
   background: var(--color-green);
   color: #fff;
 }
+
 .btn--green:hover {
   background: var(--color-ink);
 }
@@ -179,6 +182,7 @@ ul {
   background: var(--color-ink);
   color: #fff;
 }
+
 .btn--ink:hover {
   background: var(--color-green);
 }
@@ -187,6 +191,7 @@ ul {
   background: #ebe8e2;
   color: var(--color-ink);
 }
+
 .btn--light:hover {
   background: #fff;
 }
@@ -195,6 +200,7 @@ ul {
   background: var(--color-rust);
   color: #fff;
 }
+
 .btn--rust:hover {
   background: var(--color-rust-hover);
 }
@@ -238,6 +244,7 @@ ul {
 .no-scrollbar {
   scrollbar-width: none;
 }
+
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -290,6 +297,7 @@ ul {
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {
@@ -303,7 +311,7 @@ ul {
    The class is only added by JavaScript, so without it everything stays visible. */
 .reveal {
   opacity: 0;
-  transition: opacity 1.2s ease-out;
+  transition: opacity 2s ease-out;
 }
 
 .reveal.is-visible {
