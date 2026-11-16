@@ -183,7 +183,7 @@ export default function ShippingForm({ onSubmit, disabled = false, submitLabel =
           type="date"
           min={dateRange.min}
           max={dateRange.max}
-          hint="Optional — leave empty for the soonest delivery."
+          hint="Leave empty for the soonest delivery."
           value={delivery.deliveryDate}
           onChange={changeDate}
           error={errors.deliveryDate}

@@ -97,7 +97,6 @@ export default function BuyNowDialog({ flower, onClose }) {
               onSubmit={handleOrder}
               submitLabel={`Place order · ${formatPrice(unitPrice * quantity)}`}
             />
-            <p className="buy-dialog__basket-note">Your basket stays as it is.</p>
           </>
         )}
       </div>

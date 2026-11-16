@@ -457,12 +457,6 @@
   color: var(--color-ink);
 }
 
-.buy-dialog__basket-note {
-  margin-top: -6px;
-  font-size: 13px;
-  text-align: center;
-  color: var(--color-text-muted);
-}
 
 /* After the order is placed */
 .buy-dialog__done {
