@@ -82,15 +82,34 @@
   outline-offset: -3px;
 }
 
-.product-gallery__track img {
+/* One frame per photo. overflow: hidden keeps the hover-zoomed photo inside its frame. */
+.product-gallery__slide {
   flex: 0 0 100%;
-  width: 100%;
   height: 100%;
-  object-fit: cover;
+  overflow: hidden;
   scroll-snap-align: start;
   scroll-snap-stop: always;
   /* one photo per swipe, even a fast one */
+}
+
+.product-gallery__slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   user-select: none;
+}
+
+/* Hover zoom, only with a real mouse: the photo grows 2x and the zoomed spot
+   follows the cursor (--zoom-x / --zoom-y are set by ProductPage.jsx). */
+@media (hover: hover) and (pointer: fine) {
+  .product-gallery__slide img {
+    transform-origin: var(--zoom-x, 50%) var(--zoom-y, 50%);
+    transition: transform 0.3s ease-out;
+  }
+
+  .product-gallery__slide.is-hover-zoom img {
+    transform: scale(2);
+  }
 }
 
 /* Round arrow buttons over the photo. Only on computers with a mouse:
@@ -545,7 +564,7 @@
   }
 }
 /* ---------- Zoom: open the big photo full screen ---------- */
-.product-gallery__track img {
+.product-gallery__slide img {
   cursor: zoom-in;
 }
 

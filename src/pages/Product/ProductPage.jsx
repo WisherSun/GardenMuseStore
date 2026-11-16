@@ -77,6 +77,21 @@ function Gallery({ images, name }) {
   const trackRef = useRef(null);
   const many = images.length > 1;
 
+  // Hover zoom (mouse only): the photo is shown 2x bigger and the zoomed spot follows
+  // the cursor. The position goes straight into CSS variables instead of React state,
+  // so moving the mouse doesn't re-render the page dozens of times a second.
+  // The zoom itself only happens on computers with a mouse (see Product.css).
+  const hoverZoom = (e) => {
+    if (e.pointerType !== "mouse") return;
+    const slide = e.currentTarget;
+    const box = slide.getBoundingClientRect();
+    slide.style.setProperty("--zoom-x", `${((e.clientX - box.left) / box.width) * 100}%`);
+    slide.style.setProperty("--zoom-y", `${((e.clientY - box.top) / box.height) * 100}%`);
+    slide.classList.add("is-hover-zoom");
+  };
+
+  const stopHoverZoom = (e) => e.currentTarget.classList.remove("is-hover-zoom");
+
   // Back from full screen: show the photo the customer was last looking at there
   const closeViewer = (index) => {
     setViewerIndex(null);
@@ -124,14 +139,20 @@ function Gallery({ images, name }) {
           }
         >
           {images.map((src, i) => (
-            <img
+            <div
               key={src}
-              src={src}
-              alt={`${name}, photo ${i + 1} of ${images.length}`}
-              loading={i === 0 ? "eager" : "lazy"}
-              draggable="false"
-              onClick={() => setViewerIndex(i)}
-            />
+              className="product-gallery__slide"
+              onPointerMove={hoverZoom}
+              onPointerLeave={stopHoverZoom}
+            >
+              <img
+                src={src}
+                alt={`${name}, photo ${i + 1} of ${images.length}`}
+                loading={i === 0 ? "eager" : "lazy"}
+                draggable="false"
+                onClick={() => setViewerIndex(i)}
+              />
+            </div>
           ))}
         </div>
 
