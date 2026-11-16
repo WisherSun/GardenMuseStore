@@ -4,7 +4,12 @@ import { fetchFlowerById } from "../../api/flowers.js";
 import { useCart } from "../../hooks/useCart.js";
 import { formatPrice } from "../../lib/format.js";
 import { formatShortDate, productDeliveryWindow } from "../../lib/delivery.js";
-import { ArrowRightIcon, CheckIcon, LeafIcon, TruckIcon } from "../../components/Icons.jsx";
+import {
+  ArrowRightIcon,
+  CheckIcon,
+  LeafIcon,
+  TruckIcon,
+} from "../../components/Icons.jsx";
 import BuyNowDialog from "./BuyNowDialog.jsx";
 import "./Product.css";
 
@@ -26,7 +31,8 @@ function useFlower(id) {
 
     fetchFlowerById(Number(id))
       .then((flower) => {
-        if (!ignore) setState({ status: flower ? "success" : "notfound", flower, id });
+        if (!ignore)
+          setState({ status: flower ? "success" : "notfound", flower, id });
       })
       .catch((error) => {
         console.error("Could not load flower:", error);
@@ -102,7 +108,9 @@ function Gallery({ images, name }) {
           onKeyDown={many ? handleKey : undefined}
           tabIndex={many ? 0 : undefined}
           role={many ? "region" : undefined}
-          aria-label={many ? `${name} photos, use arrow keys to browse` : undefined}
+          aria-label={
+            many ? `${name} photos, use arrow keys to browse` : undefined
+          }
         >
           {images.map((src, i) => (
             <img
@@ -143,7 +151,11 @@ function Gallery({ images, name }) {
       </div>
 
       {many && (
-        <div className="product-gallery__thumbs" role="group" aria-label="Choose a photo">
+        <div
+          className="product-gallery__thumbs"
+          role="group"
+          aria-label="Choose a photo"
+        >
           {images.map((src, i) => (
             <button
               key={src}
@@ -175,29 +187,44 @@ function BuyBox({ flower }) {
 
       {isGuest ? (
         <>
-          <Link to="/login" state={{ from: pathname }} className="btn btn--rust btn--block">
+          <Link
+            to="/login"
+            state={{ from: pathname }}
+            className="btn btn--rust btn--block"
+          >
             Buy now
           </Link>
-          <p className="product-actions__note">You’ll be asked to sign in first.</p>
+          <p className="product-actions__note">
+            You’ll be asked to sign in first.
+          </p>
         </>
       ) : (
-        <button className="btn btn--rust btn--block" onClick={() => setBuying(true)}>
+        <button
+          className="btn btn--rust btn--block"
+          onClick={() => setBuying(true)}
+        >
           Buy now
         </button>
       )}
 
-      {buying && <BuyNowDialog flower={flower} onClose={() => setBuying(false)} />}
+      {buying && (
+        <BuyNowDialog flower={flower} onClose={() => setBuying(false)} />
+      )}
     </div>
   );
 }
 
 function BasketControl({ flower }) {
   const { add, lines, setQuantity } = useCart();
-  const quantity = lines.find((line) => line.flowerId === flower.id)?.quantity ?? 0;
+  const quantity =
+    lines.find((line) => line.flowerId === flower.id)?.quantity ?? 0;
 
   if (quantity === 0) {
     return (
-      <button className="btn btn--ink btn--block" onClick={() => add(flower.id)}>
+      <button
+        className="btn btn--ink btn--block"
+        onClick={() => add(flower.id)}
+      >
         Add to basket
       </button>
     );
@@ -205,10 +232,18 @@ function BasketControl({ flower }) {
 
   return (
     <div className="product-buy">
-      <div className="product-buy__stepper" role="group" aria-label={`${flower.name} in basket`}>
+      <div
+        className="product-buy__stepper"
+        role="group"
+        aria-label={`${flower.name} in basket`}
+      >
         <button
           onClick={() => setQuantity(flower.id, quantity - 1)}
-          aria-label={quantity === 1 ? `Remove ${flower.name} from basket` : "Decrease quantity"}
+          aria-label={
+            quantity === 1
+              ? `Remove ${flower.name} from basket`
+              : "Decrease quantity"
+          }
         >
           −
         </button>
@@ -240,11 +275,15 @@ function DeliveryNote() {
       </span>
       <div>
         <p className="product-delivery__text">
-          We can deliver these flowers from <strong>{sameDay ? "today" : "tomorrow"}</strong>,{" "}
-          <strong>{formatShortDate(from)}</strong>, until <strong>{formatShortDate(to)}</strong>.
+          We can deliver these flowers from <br />
+          <strong>{sameDay ? "today" : "tomorrow"}</strong>,{" "}
+          <strong>{formatShortDate(from)}</strong>, until{" "}
+          <strong>{formatShortDate(to)}</strong>.
         </p>
         <p className="product-delivery__hint">
-          {sameDay ? "Order before 1 pm for delivery today." : "Orders after 1 pm are delivered from tomorrow."}
+          {sameDay
+            ? "Order before 1 pm for delivery today."
+            : "Orders after 1 pm are delivered from tomorrow."}
         </p>
       </div>
     </div>
@@ -253,14 +292,27 @@ function DeliveryNote() {
 
 function ProductSkeleton() {
   return (
-    <div className="product-layout" aria-busy="true" aria-label="Loading flower">
+    <div
+      className="product-layout"
+      aria-busy="true"
+      aria-label="Loading flower"
+    >
       <div className="product-gallery__main skeleton" />
       <div className="product-info">
         <div className="skeleton skeleton--line" style={{ width: "30%" }} />
-        <div className="skeleton skeleton--line" style={{ width: "80%", height: 40 }} />
+        <div
+          className="skeleton skeleton--line"
+          style={{ width: "80%", height: 40 }}
+        />
         <div className="skeleton skeleton--line" style={{ width: "25%" }} />
-        <div className="skeleton skeleton--line skeleton--thin" style={{ width: "90%" }} />
-        <div className="skeleton skeleton--line skeleton--thin" style={{ width: "70%" }} />
+        <div
+          className="skeleton skeleton--line skeleton--thin"
+          style={{ width: "90%" }}
+        />
+        <div
+          className="skeleton skeleton--line skeleton--thin"
+          style={{ width: "70%" }}
+        />
       </div>
     </div>
   );
@@ -307,7 +359,9 @@ export default function ProductPage() {
           </div>
         )}
 
-        {status === "success" && <ProductDetails key={flower.id} flower={flower} />}
+        {status === "success" && (
+          <ProductDetails key={flower.id} flower={flower} />
+        )}
       </div>
     </section>
   );
@@ -328,7 +382,9 @@ function ProductDetails({ flower }) {
         <p className="product-info__price">
           {onSale ? (
             <>
-              <span className="product-info__price--sale">{formatPrice(flower.salePrice)}</span>
+              <span className="product-info__price--sale">
+                {formatPrice(flower.salePrice)}
+              </span>
               <s className="product-info__price--old">
                 <span className="visually-hidden">was </span>
                 {formatPrice(flower.price)}
@@ -339,7 +395,9 @@ function ProductDetails({ flower }) {
           )}
         </p>
 
-        {flower.description && <p className="product-info__lead">{flower.description}</p>}
+        {flower.description && (
+          <p className="product-info__lead">{flower.description}</p>
+        )}
 
         <BuyBox flower={flower} />
 
