@@ -298,3 +298,14 @@ ul {
     scroll-behavior: auto !important;
   }
 }
+
+/* ---------- Fade in on scroll (hooks/useRevealOnScroll.js) ----------
+   The class is only added by JavaScript, so without it everything stays visible. */
+.reveal {
+  opacity: 0;
+  transition: opacity 1.2s ease-out;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+}
