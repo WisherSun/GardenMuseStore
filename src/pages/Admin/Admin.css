@@ -231,6 +231,11 @@
   color: #fff;
 }
 
+.admin-badge--soldout {
+  background: #e4e1dc;
+  color: #6b6760;
+}
+
 /* ---------- Product form (pop-up) ---------- */
 .admin-dialog {
   width: min(560px, calc(100% - 24px));

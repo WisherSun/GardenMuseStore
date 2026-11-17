@@ -119,6 +119,7 @@ export default function AdminProducts() {
                         {row.name}
                         {row.color && <span className="admin-badge admin-badge--color">{row.color}</span>}
                         {onSale &&<span className="admin-badge admin-badge--sale">Sale</span>}
+                        {!(row.amount > 0) && <span className="admin-badge admin-badge--soldout">Sold out</span>}
                       </h3>
                       <p className="admin-product__desc">{row.description}</p>
                       <p className="admin-product__price">
@@ -130,6 +131,7 @@ export default function AdminProducts() {
                         ) : (
                           formatPrice(Number(row.price))
                         )}
+                        <span className="admin-product__id">In stock: {row.amount ?? 0}</span>
                         <span className="admin-product__id">ID {row.id}</span>
                       </p>
                     </div>

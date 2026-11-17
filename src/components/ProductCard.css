@@ -190,6 +190,42 @@
   color: #fff;
 }
 
+/* ---------- Sold out ----------
+   The card still opens the flower page, but looks faded and grey,
+   and has no basket buttons. */
+.product-card--soldout .product-card__media img {
+  filter: grayscale(1);
+  opacity: 0.6;
+}
+
+.product-card--soldout .product-card__name,
+.product-card--soldout .product-card__price,
+.product-card--soldout .product-card__price--sale {
+  color: var(--color-text-muted);
+}
+
+.product-card__badge--soldout {
+  background: #6b6760;
+  color: #fff;
+}
+
+.product-card__soldout {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+/* "+" on the photo when everything in stock is already in the basket */
+.product-card__quick-add:disabled,
+.product-card__quick-add:disabled:hover {
+  background: #fff;
+  color: var(--color-ink);
+  opacity: 0.5;
+  cursor: default;
+}
+
 /* ---------- Loading placeholders ---------- */
 .product-card--skeleton:hover {
   transform: none;

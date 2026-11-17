@@ -59,8 +59,12 @@ function useFlower(id) {
     setAttempt((n) => n + 1);
   };
 
-  if (!validId) return { status: "notfound", flower: null, retry };
-  return { ...state, retry };
+  // Loads the flower again in the background (the page stays as it is meanwhile),
+  // e.g. to show the new stock after an order.
+  const refresh = () => setAttempt((n) => n + 1);
+
+  if (!validId) return { status: "notfound", flower: null, retry, refresh };
+  return { ...state, retry, refresh };
 }
 
 // The details text ends with care advice that starts with "Care:".
@@ -229,16 +233,61 @@ function Gallery({ images, name }) {
   );
 }
 
+// How many the customer can still order. What's already in their basket is taken off,
+// so the number goes down as they add more. (The basket doesn't reserve flowers:
+// stock only really goes down when an order is placed, see supabase/flower-stock.sql.)
+function StockNote({ stock, inBasket }) {
+  if (stock === 0) {
+    return (
+      <p className="product-stock product-stock--soldout" role="status">
+        <strong>Sold out.</strong> This flower isn’t available right now.
+      </p>
+    );
+  }
+
+  const left = Math.max(0, stock - inBasket);
+  return (
+    <p className="product-stock" aria-live="polite">
+      {inBasket === 0 ? (
+        <>
+          <strong>{stock}</strong> available to order
+        </>
+      ) : left > 0 ? (
+        <>
+          <strong>{left}</strong> more available · {inBasket} in your basket
+        </>
+      ) : (
+        <>All {stock} available are in your basket</>
+      )}
+    </p>
+  );
+}
+
 // "Add to basket" (or the quantity in the basket) + "Buy now".
 // Guests are sent to sign in first for "Buy now", then come back to this page.
-function BuyBox({ flower }) {
-  const { isGuest } = useCart();
+// `onOrdered` runs after a "Buy now" order, to load the new stock.
+function BuyBox({ flower, onOrdered }) {
+  const { isGuest, lines } = useCart();
   const { pathname } = useLocation();
   const [buying, setBuying] = useState(false);
+  const inBasket = lines.find((line) => line.flowerId === flower.id)?.quantity ?? 0;
+
+  if (flower.stock === 0 && !buying) {
+    return (
+      <div className="product-actions">
+        <StockNote stock={0} inBasket={inBasket} />
+        <button className="btn btn--ink btn--block" disabled>
+          Not available
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="product-actions">
-      <BasketControl flower={flower} />
+      <StockNote stock={flower.stock} inBasket={inBasket} />
+
+      <BasketControl flower={flower} quantity={inBasket} />
 
       {isGuest ? (
         <>
@@ -263,22 +312,23 @@ function BuyBox({ flower }) {
       )}
 
       {buying && (
-        <BuyNowDialog flower={flower} onClose={() => setBuying(false)} />
+        <BuyNowDialog flower={flower} onClose={() => setBuying(false)} onOrdered={onOrdered} />
       )}
     </div>
   );
 }
 
-function BasketControl({ flower }) {
-  const { add, lines, setQuantity } = useCart();
-  const quantity =
-    lines.find((line) => line.flowerId === flower.id)?.quantity ?? 0;
+function BasketControl({ flower, quantity }) {
+  const { add, setQuantity } = useCart();
+  // Can't put more in the basket than there are in stock
+  const max = Math.min(flower.stock, MAX_QUANTITY);
 
   if (quantity === 0) {
     return (
       <button
         className="btn btn--ink btn--block"
         onClick={() => add(flower.id)}
+        disabled={max === 0}
       >
         Add to basket
       </button>
@@ -305,7 +355,7 @@ function BasketControl({ flower }) {
         <span aria-live="polite">{quantity}</span>
         <button
           onClick={() => setQuantity(flower.id, quantity + 1)}
-          disabled={quantity >= MAX_QUANTITY}
+          disabled={quantity >= max}
           aria-label="Increase quantity"
         >
           +
@@ -375,7 +425,7 @@ function ProductSkeleton() {
 
 export default function ProductPage() {
   const { id } = useParams();
-  const { status, flower, retry } = useFlower(id);
+  const { status, flower, retry, refresh } = useFlower(id);
 
   // Browser tab shows the flower name while you're on its page.
   useEffect(() => {
@@ -415,7 +465,7 @@ export default function ProductPage() {
         )}
 
         {status === "success" && (
-          <ProductDetails key={flower.id} flower={flower} />
+          <ProductDetails key={flower.id} flower={flower} onOrdered={refresh} />
         )}
       </div>
     </section>
@@ -447,7 +497,10 @@ function ColorPicker({ flower }) {
                 navigate(`/shop/${option.id}`, { replace: true, state: { keepScroll: true } })
               }
             />
-            <span>{option.color}</span>
+            <span className={option.stock === 0 ? "is-soldout" : undefined}>
+              {option.color}
+              {option.stock === 0 && <span className="visually-hidden"> (sold out)</span>}
+            </span>
           </label>
         ))}
       </div>
@@ -455,16 +508,20 @@ function ColorPicker({ flower }) {
   );
 }
 
-function ProductDetails({ flower }) {
+function ProductDetails({ flower, onOrdered }) {
   const onSale = flower.salePrice != null;
   const { about, care } = splitDetails(flower.details);
 
   return (
-    <div className="product-layout">
+    <div className={`product-layout ${flower.stock === 0 ? "product-layout--soldout" : ""}`}>
       <Gallery key={flower.id} images={flower.images} name={flower.name} />
 
       <div className="product-info">
-        {onSale && <span className="product-info__badge">Sale</span>}
+        {flower.stock === 0 ? (
+          <span className="product-info__badge product-info__badge--soldout">Sold out</span>
+        ) : (
+          onSale && <span className="product-info__badge">Sale</span>
+        )}
         <h1 className="product-info__name">{flower.name}</h1>
 
         <p className="product-info__price">
@@ -489,7 +546,7 @@ function ProductDetails({ flower }) {
 
         <ColorPicker flower={flower} />
 
-        <BuyBox flower={flower} />
+        <BuyBox flower={flower} onOrdered={onOrdered} />
 
         <DeliveryNote />
 

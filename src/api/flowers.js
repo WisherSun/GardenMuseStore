@@ -25,6 +25,8 @@ function toProduct(row) {
     details: row.details ?? "",
     price,
     salePrice: onSale ? Number(row.newPrice) : null,
+    // How many can still be ordered ("amount" column). 0 = sold out.
+    stock: Math.max(0, Number(row.amount) || 0),
   };
 }
 

@@ -229,6 +229,44 @@
   font-size: clamp(34px, 9vw, 52px);
 }
 
+/* ---------- Stock ---------- */
+.product-info__badge--soldout {
+  background: #6b6760;
+}
+
+/* Sold out: photos turn grey */
+.product-layout--soldout .product-gallery img {
+  filter: grayscale(1);
+  opacity: 0.7;
+}
+
+.product-stock {
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+.product-stock strong {
+  color: var(--color-ink);
+}
+
+.product-stock--soldout {
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  background: #efedea;
+  color: #6b6760;
+}
+
+.product-stock--soldout strong {
+  color: #4a4741;
+}
+
+.product-actions .btn:disabled {
+  background: #d9d6d1;
+  border-color: #d9d6d1;
+  color: #6b6760;
+  cursor: not-allowed;
+}
+
 .product-info__price {
   display: flex;
   align-items: baseline;
@@ -812,6 +850,13 @@
   border-color: var(--color-ink);
   background: var(--color-ink);
   color: #fff;
+}
+
+/* A colour that is sold out: still clickable (its page says "Sold out"), but faded and crossed out */
+.color-picker__option span.is-soldout {
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+  border-style: dashed;
 }
 
 .color-picker__option input:focus-visible + span {

@@ -22,6 +22,7 @@ function toForm(product) {
     image3: product?.image3 ?? "",
     image4: product?.image4 ?? "",
     details: product?.details ?? "",
+    amount: product?.amount != null ? String(product.amount) : "",
   };
 }
 
@@ -55,6 +56,8 @@ function validate(form) {
     if (!form.newPrice.trim() || !(newPrice > 0)) errors.newPrice = "Enter the sale price.";
     else if (price > 0 && newPrice >= price) errors.newPrice = "Sale price must be lower than the price.";
   }
+  if (!/^\d+$/.test(form.amount.trim())) errors.amount = "Enter a whole number, 0 or more (0 = sold out).";
+  else if (Number(form.amount) > 100000) errors.amount = "That’s too many (100,000 max).";
   if (!isLink(form.image)) errors.image = "Enter an image link starting with https://";
   for (const field of EXTRA_IMAGES) {
     if (form[field].trim() && !isLink(form[field])) errors[field] = "Link must start with https:// (or leave it empty).";
@@ -99,6 +102,7 @@ export default function ProductForm({ product, onCancel, onSaved }) {
       price: Number(form.price),
       discount: form.discount,
       newPrice: form.discount ? Number(form.newPrice) : null,
+      amount: Number(form.amount),
       image: form.image.trim(),
       // Empty boxes are saved as null, so the flower page simply skips them.
       image2: form.image2.trim() || null,
@@ -195,6 +199,18 @@ export default function ProductForm({ product, onCancel, onSaved }) {
           <input type="checkbox" checked={form.discount} onChange={set("discount")} />
           On sale
         </label>
+
+        <TextField
+          label="In stock"
+          type="number"
+          inputMode="numeric"
+          min="0"
+          step="1"
+          value={form.amount}
+          onChange={set("amount")}
+          error={errors.amount}
+          hint="How many customers can still order. 0 = shown as sold out. Goes down by itself with every order."
+        />
 
         <ImageField
           label="Main image link"

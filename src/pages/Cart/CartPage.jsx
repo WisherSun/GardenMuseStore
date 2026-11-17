@@ -12,6 +12,9 @@ const MAX_QUANTITY = 99;
 // The price the customer actually pays (sale price if there is one)
 const unitPrice = (product) => product.salePrice ?? product.price;
 
+// More in the basket than is in stock (someone else ordered them meanwhile)
+const overStock = (item) => item.quantity > item.product.stock;
+
 // Loads name/price/image for every flower in the basket.
 // Already loaded flowers are kept, so changing a quantity or removing a line doesn't reload anything.
 function useBasketProducts(lines, remove) {
@@ -68,9 +71,12 @@ function useBasketProducts(lines, remove) {
 
 function CartItem({ product, quantity, onChange, onRemove }) {
   const onSale = product.salePrice != null;
+  const soldOut = product.stock === 0;
+  const tooMany = quantity > product.stock;
+  const max = Math.min(product.stock, MAX_QUANTITY);
 
   return (
-    <li className="cart-item">
+    <li className={`cart-item ${soldOut ? "cart-item--soldout" : ""}`}>
       {/* Photo and name both open the flower's page (in the colour that's in the basket).
           The photo link is skipped by keyboard and screen readers: the name link says the same. */}
       <Link to={`/shop/${product.id}`} className="cart-item__image-link" tabIndex={-1} aria-hidden="true">
@@ -114,7 +120,7 @@ function CartItem({ product, quantity, onChange, onRemove }) {
             <button
               className="stepper__btn"
               onClick={() => onChange(quantity + 1)}
-              disabled={quantity >= MAX_QUANTITY}
+              disabled={quantity >= max}
               aria-label="Increase quantity"
             >
               +
@@ -124,6 +130,21 @@ function CartItem({ product, quantity, onChange, onRemove }) {
             Remove
           </button>
         </div>
+
+        {tooMany && (
+          <p className="cart-item__stock" role="alert">
+            {soldOut ? (
+              "Sold out, please remove it to place your order."
+            ) : (
+              <>
+                Only {product.stock} left.{" "}
+                <button className="cart-item__fix" onClick={() => onChange(product.stock)}>
+                  Change to {product.stock}
+                </button>
+              </>
+            )}
+          </p>
+        )}
       </div>
 
       <span className="cart-item__total">{formatPrice(unitPrice(product) * quantity)}</span>
@@ -180,6 +201,8 @@ export default function CartPage() {
     (sum, item) => sum + (item.product.price - unitPrice(item.product)) * item.quantity,
     0,
   );
+
+  const stockProblem = items.some(overStock);
 
   const showSkeleton = status === "loading" || (loading && items.length === 0);
 
@@ -279,7 +302,15 @@ export default function CartPage() {
                   </p>
                 </>
               ) : (
-                <ShippingForm onSubmit={handlePlaceOrder} disabled={loading} />
+                <>
+                  {stockProblem && (
+                    <p className="cart-summary__note cart-summary__note--warn" role="alert">
+                      Some flowers in your basket aren’t available in that quantity any more. Please fix them
+                      above to place your order.
+                    </p>
+                  )}
+                  <ShippingForm onSubmit={handlePlaceOrder} disabled={loading || stockProblem} />
+                </>
               )}
             </aside>
           </div>

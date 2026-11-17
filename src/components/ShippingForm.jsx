@@ -61,6 +61,8 @@ function orderErrorMessage(err) {
   if (message.includes("basket is empty")) return "Your basket is empty.";
   if (message.includes("sign in")) return "Please sign in to place an order.";
   if (message.includes("no longer available")) return "Sorry, this flower is no longer available.";
+  // Stock messages from supabase/flower-stock.sql are already written for customers
+  if (message.includes("sold out") || message.includes(" left")) return message;
   if (message.includes("quantity")) return "Please choose a quantity from 1 to 99.";
   if (message.includes("place_single_order")) return "“Buy now” isn’t set up yet. Please use the basket for now.";
   if (message.includes("already passed")) return "That delivery time has already passed. Please choose a later one.";

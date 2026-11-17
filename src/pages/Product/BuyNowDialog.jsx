@@ -9,12 +9,15 @@ const MAX_QUANTITY = 99;
 
 // "Buy now" pop-up: order this one flower straight away.
 // The basket is not used and not changed.
-export default function BuyNowDialog({ flower, onClose }) {
+// `onOrdered` runs once the order is placed (the page then loads the new stock).
+export default function BuyNowDialog({ flower, onClose, onOrdered }) {
   const dialogRef = useRef(null);
   const [quantity, setQuantity] = useState(1);
   const [orderId, setOrderId] = useState(null);
 
   const unitPrice = flower.salePrice ?? flower.price;
+  // Can't order more than there are in stock (the database checks this too)
+  const max = Math.max(1, Math.min(flower.stock, MAX_QUANTITY));
 
   // <dialog> gives us a focus trap and closing with Escape for free.
   useEffect(() => {
@@ -25,6 +28,7 @@ export default function BuyNowDialog({ flower, onClose }) {
 
   const handleOrder = async (address) => {
     setOrderId(await placeSingleOrder(flower.id, quantity, address));
+    onOrdered?.();
   };
 
   return (
@@ -70,7 +74,9 @@ export default function BuyNowDialog({ flower, onClose }) {
               <div className="buy-dialog__item-info">
                 <p className="buy-dialog__name">{flower.name}</p>
                 {flower.color && <p className="buy-dialog__unit">Colour: {flower.color}</p>}
-                <p className="buy-dialog__unit">{formatPrice(unitPrice)} each</p>
+                <p className="buy-dialog__unit">
+                  {formatPrice(unitPrice)} each · {flower.stock} available
+                </p>
                 <div className="product-buy__stepper buy-dialog__stepper" role="group" aria-label="Quantity">
                   <button
                     type="button"
@@ -84,7 +90,7 @@ export default function BuyNowDialog({ flower, onClose }) {
                   <button
                     type="button"
                     onClick={() => setQuantity((q) => q + 1)}
-                    disabled={quantity >= MAX_QUANTITY}
+                    disabled={quantity >= max}
                     aria-label="Increase quantity"
                   >
                     +

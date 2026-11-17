@@ -17,6 +17,9 @@ export default function ProductCard({ product }) {
   const [added, setAdded] = useState(false);
   const onSale = product.salePrice != null;
   const quantity = lines.find((line) => line.flowerId === product.id)?.quantity ?? 0;
+  const soldOut = product.stock === 0;
+  // Can't put more in the basket than there are in stock
+  const max = Math.min(product.stock, MAX_QUANTITY);
 
   // Show a tick on the "+" for a moment after clicking.
   useEffect(() => {
@@ -31,17 +34,24 @@ export default function ProductCard({ product }) {
   };
 
   return (
-    <article className="product-card">
+    <article className={`product-card ${soldOut ? "product-card--soldout" : ""}`}>
       <div className="product-card__media">
         <img src={product.image} alt={product.name} loading="lazy" />
-        {onSale && <span className="product-card__badge product-card__badge--sale">Sale</span>}
-        <button
-          className={`product-card__quick-add ${added ? "is-added" : ""}`}
-          onClick={handleAdd}
-          aria-label={`Add ${product.name} to cart`}
-        >
-          {added ? <CheckIcon /> : <PlusIcon />}
-        </button>
+        {soldOut ? (
+          <span className="product-card__badge product-card__badge--soldout">Sold out</span>
+        ) : (
+          onSale && <span className="product-card__badge product-card__badge--sale">Sale</span>
+        )}
+        {!soldOut && (
+          <button
+            className={`product-card__quick-add ${added ? "is-added" : ""}`}
+            onClick={handleAdd}
+            disabled={quantity >= max}
+            aria-label={quantity >= max ? `No more ${product.name} in stock` : `Add ${product.name} to cart`}
+          >
+            {added ? <CheckIcon /> : <PlusIcon />}
+          </button>
+        )}
       </div>
 
       <div className="product-card__body">
@@ -63,7 +73,9 @@ export default function ProductCard({ product }) {
           ) : (
             <span className="product-card__price">{formatPrice(product.price)}</span>
           )}
-          {quantity === 0 ? (
+          {soldOut ? (
+            <span className="product-card__soldout">Not available</span>
+          ) : quantity === 0 ? (
             <button className="product-card__add" onClick={handleAdd}>
               Add
             </button>
@@ -78,7 +90,7 @@ export default function ProductCard({ product }) {
               <span aria-live="polite">{quantity}</span>
               <button
                 onClick={() => setQuantity(product.id, quantity + 1)}
-                disabled={quantity >= MAX_QUANTITY}
+                disabled={quantity >= max}
                 aria-label="Increase quantity"
               >
                 +
