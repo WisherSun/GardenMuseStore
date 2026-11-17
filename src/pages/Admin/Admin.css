@@ -236,6 +236,67 @@
   color: #6b6760;
 }
 
+/* ---------- Reviews ---------- */
+.admin-reviews {
+  display: grid;
+  gap: 10px;
+}
+
+.admin-review {
+  display: grid;
+  gap: 6px;
+  padding: 14px 16px;
+  border: 1px solid #efebe5;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.admin-review__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+}
+
+.admin-review__stars {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.admin-review__stars svg {
+  width: 15px;
+  height: 15px;
+  color: #ddd7cd;
+}
+
+.admin-review__stars svg.is-filled {
+  color: var(--color-peach);
+}
+
+.admin-review__flower {
+  font-weight: 600;
+  color: var(--color-ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.admin-review__meta {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.admin-review__text {
+  line-height: 1.6;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.admin-review__delete {
+  justify-self: start;
+  flex: none;
+  margin-top: 4px;
+}
+
 /* ---------- Product form (pop-up) ---------- */
 .admin-dialog {
   width: min(560px, calc(100% - 24px));

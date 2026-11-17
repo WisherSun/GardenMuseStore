@@ -13,6 +13,7 @@ import {
 } from "../../components/Icons.jsx";
 import BuyNowDialog from "./BuyNowDialog.jsx";
 import ImageViewer from "./ImageViewer.jsx";
+import ProductReviews from "./ProductReviews.jsx";
 import "./Product.css";
 
 const MAX_QUANTITY = 99;
@@ -444,7 +445,14 @@ export default function ProductPage() {
         )}
 
         {status === "success" && (
-          <ProductDetails key={flower.id} flower={flower} onOrdered={refresh} />
+          <>
+            <ProductDetails key={flower.id} flower={flower} onOrdered={refresh} />
+            {/* Keyed by all its colours: switching colour keeps the same reviews, another flower loads new ones */}
+            <ProductReviews
+              key={flower.colors?.length ? flower.colors.map((c) => c.id).join(",") : flower.id}
+              flower={flower}
+            />
+          </>
         )}
       </div>
     </section>

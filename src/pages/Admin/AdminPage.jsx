@@ -3,19 +3,24 @@ import { useAuth } from "../../hooks/useAuth.js";
 import AuthLayout from "../Auth/AuthLayout.jsx";
 import AdminProducts from "./AdminProducts.jsx";
 import AdminOrders from "./AdminOrders.jsx";
+import AdminReviews from "./AdminReviews.jsx";
 import "./Admin.css";
 
 const tabs = [
   { id: "products", label: "Products" },
   { id: "orders", label: "Orders" },
+  { id: "reviews", label: "Reviews" },
 ];
+
+const panels = { products: AdminProducts, orders: AdminOrders, reviews: AdminReviews };
 
 // Only admins get here. This page just hides the tools from others;
 // the real protection is in the database (supabase/admin-setup.sql).
 export default function AdminPage() {
   const { user, loading, isAdmin, adminLoading } = useAuth();
   const [params, setParams] = useSearchParams();
-  const tab = params.get("tab") === "orders" ? "orders" : "products";
+  const tab = tabs.some((t) => t.id === params.get("tab")) ? params.get("tab") : "products";
+  const Panel = panels[tab];
 
   if (loading || adminLoading) return <AuthLayout title="Admin" subtitle="Checking access…" />;
   if (!user) return <Navigate to="/login" replace state={{ from: "/admin" }} />;
@@ -51,7 +56,9 @@ export default function AdminPage() {
           ))}
         </div>
 
-        <div role="tabpanel">{tab === "products" ? <AdminProducts /> : <AdminOrders />}</div>
+        <div role="tabpanel">
+          <Panel />
+        </div>
       </div>
     </section>
   );
