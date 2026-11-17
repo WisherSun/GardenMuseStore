@@ -234,12 +234,6 @@
   background: #6b6760;
 }
 
-/* Sold out: photos turn grey */
-.product-layout--soldout .product-gallery img {
-  filter: grayscale(1);
-  opacity: 0.7;
-}
-
 .product-stock {
   font-size: 14px;
   color: var(--color-text-muted);

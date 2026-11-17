@@ -233,32 +233,13 @@ function Gallery({ images, name }) {
   );
 }
 
-// How many the customer can still order. What's already in their basket is taken off,
-// so the number goes down as they add more. (The basket doesn't reserve flowers:
-// stock only really goes down when an order is placed, see supabase/flower-stock.sql.)
-function StockNote({ stock, inBasket }) {
-  if (stock === 0) {
-    return (
-      <p className="product-stock product-stock--soldout" role="status">
-        <strong>Sold out.</strong> This flower isn’t available right now.
-      </p>
-    );
-  }
-
-  const left = Math.max(0, stock - inBasket);
+// Shown instead of the basket buttons when the flower is sold out.
+// The number in stock itself is not shown on this page (team decision);
+// the "+" buttons simply stop at it.
+function SoldOutNote() {
   return (
-    <p className="product-stock" aria-live="polite">
-      {inBasket === 0 ? (
-        <>
-          <strong>{stock}</strong> available to order
-        </>
-      ) : left > 0 ? (
-        <>
-          <strong>{left}</strong> more available · {inBasket} in your basket
-        </>
-      ) : (
-        <>All {stock} available are in your basket</>
-      )}
+    <p className="product-stock product-stock--soldout" role="status">
+      <strong>Sold out.</strong> This flower isn’t available right now.
     </p>
   );
 }
@@ -275,7 +256,7 @@ function BuyBox({ flower, onOrdered }) {
   if (flower.stock === 0 && !buying) {
     return (
       <div className="product-actions">
-        <StockNote stock={0} inBasket={inBasket} />
+        <SoldOutNote />
         <button className="btn btn--ink btn--block" disabled>
           Not available
         </button>
@@ -285,8 +266,6 @@ function BuyBox({ flower, onOrdered }) {
 
   return (
     <div className="product-actions">
-      <StockNote stock={flower.stock} inBasket={inBasket} />
-
       <BasketControl flower={flower} quantity={inBasket} />
 
       {isGuest ? (
@@ -513,7 +492,7 @@ function ProductDetails({ flower, onOrdered }) {
   const { about, care } = splitDetails(flower.details);
 
   return (
-    <div className={`product-layout ${flower.stock === 0 ? "product-layout--soldout" : ""}`}>
+    <div className="product-layout">
       <Gallery key={flower.id} images={flower.images} name={flower.name} />
 
       <div className="product-info">

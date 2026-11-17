@@ -191,13 +191,8 @@
 }
 
 /* ---------- Sold out ----------
-   The card still opens the flower page, but looks faded and grey,
-   and has no basket buttons. */
-.product-card--soldout .product-card__media img {
-  filter: grayscale(1);
-  opacity: 0.6;
-}
-
+   The card still opens the flower page and the photo stays in colour,
+   but the name and price are muted and there are no basket buttons. */
 .product-card--soldout .product-card__name,
 .product-card--soldout .product-card__price,
 .product-card--soldout .product-card__price--sale {

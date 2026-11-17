@@ -76,7 +76,7 @@ function CartItem({ product, quantity, onChange, onRemove }) {
   const max = Math.min(product.stock, MAX_QUANTITY);
 
   return (
-    <li className={`cart-item ${soldOut ? "cart-item--soldout" : ""}`}>
+    <li className="cart-item">
       {/* Photo and name both open the flower's page (in the colour that's in the basket).
           The photo link is skipped by keyboard and screen readers: the name link says the same. */}
       <Link to={`/shop/${product.id}`} className="cart-item__image-link" tabIndex={-1} aria-hidden="true">
