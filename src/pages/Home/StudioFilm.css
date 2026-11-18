@@ -1,6 +1,8 @@
-/* Film from the studio (StudioFilm.jsx), right after the testimonial */
+/* Film from the studio (StudioFilm.jsx), right after the products */
+/* Normal space above (the products end without one); none below, because the
+   section after this one has its own space at the top */
 .studio-film {
-  padding-top: 0; /* the testimonial above already leaves a gap */
+  padding-bottom: 0;
 }
 
 .studio-film__text {
@@ -42,56 +44,37 @@
   object-fit: cover;
 }
 
-/* Big play button over the still photo (the whole photo is clickable) */
-.studio-film__play {
+/* Small pause / play button in the bottom-right corner */
+.studio-film__toggle {
   position: absolute;
-  inset: 0;
-  display: grid;
-  place-content: center;
-  justify-items: center;
-  gap: 12px;
-  /* a soft dark veil so the white button stands out on any photo */
-  background: linear-gradient(rgba(13, 40, 33, 0.05), rgba(13, 40, 33, 0.35));
-  color: #fff;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.studio-film__play-circle {
+  right: 12px;
+  bottom: 12px;
   display: grid;
   place-items: center;
-  width: 64px;
-  height: 64px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  background: rgba(252, 249, 244, 0.92);
-  color: var(--color-rust);
-  box-shadow: 0 8px 24px rgba(13, 40, 33, 0.25);
-  transition: transform 0.3s, background-color 0.3s;
+  background: rgba(13, 40, 33, 0.45);
+  color: #fff;
+  backdrop-filter: blur(4px);
+  opacity: 0.8;
+  transition: opacity 0.2s, background-color 0.2s;
 }
 
-.studio-film__play-icon {
-  width: 26px;
-  height: 26px;
-  margin-left: 3px; /* a triangle looks centred only when moved a bit right */
+.studio-film__toggle svg {
+  width: 16px;
+  height: 16px;
 }
 
-.studio-film__play-label {
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
+.studio-film__toggle:hover,
+.studio-film__toggle:focus-visible {
+  opacity: 1;
+  background: rgba(13, 40, 33, 0.7);
 }
 
-.studio-film__play:hover .studio-film__play-circle {
-  transform: scale(1.08);
-  background: #fff;
-}
-
-.studio-film__play:focus-visible {
-  outline: 3px solid var(--color-peach);
-  outline-offset: -6px;
-  border-radius: var(--radius-lg);
+.studio-film__toggle:focus-visible {
+  outline: 2px solid var(--color-peach);
+  outline-offset: 2px;
 }
 
 /* ---------- Tablet & desktop ---------- */
@@ -105,16 +88,6 @@
     font-size: min(52px, 6.6vw);
     white-space: nowrap;
   }
-
-  .studio-film__play-circle {
-    width: 84px;
-    height: 84px;
-  }
-
-  .studio-film__play-icon {
-    width: 32px;
-    height: 32px;
-  }
 }
 
 @media (min-width: 1024px) {
@@ -125,10 +98,5 @@
   .studio-film__frame {
     max-width: 1040px;
     margin-inline: auto;
-  }
-
-  .studio-film__play-circle {
-    width: 96px;
-    height: 96px;
   }
 }

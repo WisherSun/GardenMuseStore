@@ -19,9 +19,9 @@ export default function HomePage() {
       <Hero />
       <Promises />
       <Products />
+      <StudioFilm />
       <Subscription />
       <Craft />
-      <StudioFilm />
       <Newsletter />
       <Faq />
     </div>

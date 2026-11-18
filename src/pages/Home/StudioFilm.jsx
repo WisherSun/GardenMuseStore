@@ -1,27 +1,56 @@
-import { useRef, useState } from "react";
-import { PlayIcon } from "../../components/Icons.jsx";
+import { useEffect, useRef, useState } from "react";
+import { PauseIcon, PlayIcon } from "../../components/Icons.jsx";
 import "./StudioFilm.css";
 
 // PLACEHOLDER video: "A florist making flower arrangement" from Pexels
 // (https://www.pexels.com/video/a-florist-making-flower-arrangement-3805783/), free to use
 // without credit. It is kept in public/video/ so it doesn't depend on Pexels staying online.
-// Replace it (and the poster = the still shown before playing) with the studio's own film.
+// Replace it (and the poster = the still shown until the video plays) with the studio's own film.
 const VIDEO_SRC = "/video/studio-film-720.mp4";
 const POSTER_SRC = "/video/studio-film-poster.jpg";
 
-// Home page: a short film from the studio. Before it is played, only the still photo is
-// loaded (preload="none"), so the video doesn't use anyone's mobile data until they ask for it.
-// After "Play", the browser's own controls appear (pause, sound, full screen).
+const prefersReducedMotion = () =>
+  typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+
+// Home page: a short silent film from the studio that plays in a loop by itself.
+// - It only starts (and only downloads) when it scrolls into view, and pauses when it
+//   leaves the screen, so it doesn't use mobile data or battery for nothing.
+// - Muted: browsers only allow videos to play by themselves without sound.
+// - The small button in the corner pauses it. Accessibility rules ask for this for anything
+//   that moves for longer than 5 seconds.
+// - People who asked their device for less motion see the still photo until they press play.
 export default function StudioFilm() {
   const videoRef = useRef(null);
-  const [started, setStarted] = useState(false);
+  const [paused, setPaused] = useState(prefersReducedMotion); // paused by the visitor (or by the setting)
+  const [inView, setInView] = useState(false);
 
-  const play = () => {
-    setStarted(true);
-    videoRef.current?.play().catch(() => {
-      // Some browsers refuse; the controls are shown anyway, so the visitor can press play there.
+  // Is the video on the screen?
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || typeof IntersectionObserver === "undefined") {
+      setInView(true);
+      return;
+    }
+    const observer = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting), {
+      threshold: 0.25,
     });
-  };
+    observer.observe(video);
+    return () => observer.disconnect();
+  }, []);
+
+  // Play while on screen and not paused, otherwise pause
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (inView && !paused) {
+      video.play().catch(() => {
+        // The browser refused (e.g. battery saver): show the play button instead
+        setPaused(true);
+      });
+    } else {
+      video.pause();
+    }
+  }, [inView, paused]);
 
   return (
     <section className="section studio-film" aria-labelledby="studio-film-title">
@@ -37,27 +66,29 @@ export default function StudioFilm() {
           </p>
         </div>
 
-        <div className={`studio-film__frame ${started ? "is-playing" : ""}`}>
+        <div className="studio-film__frame">
           <video
             ref={videoRef}
             className="studio-film__video"
             src={VIDEO_SRC}
             poster={POSTER_SRC}
-            preload="none"
-            playsInline // iPhones: play on the page, not straight to full screen
-            controls={started}
+            preload="none" // nothing is downloaded until it is about to play
+            muted
+            loop
+            playsInline // iPhones: play on the page, not in full screen
+            disablePictureInPicture
             width="1280"
             height="720"
-            aria-label="Film: a florist arranging a bouquet in the Garden Muse studio"
+            aria-label="Silent film: a florist arranging a bouquet in the Garden Muse studio"
           />
-          {!started && (
-            <button type="button" className="studio-film__play" onClick={play}>
-              <span className="studio-film__play-circle">
-                <PlayIcon className="studio-film__play-icon" />
-              </span>
-              <span className="studio-film__play-label">Play the film</span>
-            </button>
-          )}
+          <button
+            type="button"
+            className="studio-film__toggle"
+            onClick={() => setPaused((p) => !p)}
+            aria-label={paused ? "Play the film" : "Pause the film"}
+          >
+            {paused ? <PlayIcon /> : <PauseIcon />}
+          </button>
         </div>
       </div>
     </section>

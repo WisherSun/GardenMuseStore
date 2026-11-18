@@ -104,6 +104,14 @@ export const PlayIcon = (p) => (
   </svg>
 );
 
+// Two bars (pause button)
+export const PauseIcon = (p) => (
+  <svg {...base} fill="currentColor" stroke="none" {...p}>
+    <rect x="6.5" y="5" width="4" height="14" rx="1" />
+    <rect x="13.5" y="5" width="4" height="14" rx="1" />
+  </svg>
+);
+
 export const StarIcon = (p) => (
   <svg {...base} fill="currentColor" stroke="none" {...p}>
     <path d="M12 3l2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L12 16.8l-5.4 2.9 1.1-6.1-4.5-4.2 6.1-.8z" />
