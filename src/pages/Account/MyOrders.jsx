@@ -17,7 +17,11 @@ const statusLabels = {
 };
 
 const formatDate = (value) =>
-  new Date(value).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+  new Date(value).toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
 
 const MAX_QUANTITY = 99;
 
@@ -28,10 +32,13 @@ const MAX_QUANTITY = 99;
 function BuyAgain({ item, flower }) {
   const { add, lines } = useCart();
   const [added, setAdded] = useState(false);
-  const inBasket = lines.find((line) => line.flowerId === item.flower_id)?.quantity ?? 0;
+  const inBasket =
+    lines.find((line) => line.flowerId === item.flower_id)?.quantity ?? 0;
 
   if (!item.flower_id || flower === null) {
-    return <span className="buy-again buy-again--off">No longer available</span>;
+    return (
+      <span className="buy-again buy-again--off">No longer available</span>
+    );
   }
   if (flower && flower.stock === 0) {
     return <span className="buy-again buy-again--off">Sold out</span>;
@@ -87,7 +94,13 @@ export default function MyOrders({ userId }) {
       .then(async (data) => {
         // The ordered flowers as they are now (still sold? in stock?), for "Buy again".
         // If this fails, the orders are still shown.
-        const ids = [...new Set(data.flatMap((o) => o.items.map((i) => i.flower_id)).filter(Boolean))];
+        const ids = [
+          ...new Set(
+            data
+              .flatMap((o) => o.items.map((i) => i.flower_id))
+              .filter(Boolean),
+          ),
+        ];
         let byId = null;
         try {
           const found = await fetchFlowersByIds(ids);
@@ -120,7 +133,9 @@ export default function MyOrders({ userId }) {
         My orders
       </h2>
 
-      {status === "loading" && <p className="my-orders__note">Loading your orders…</p>}
+      {status === "loading" && (
+        <p className="my-orders__note">Loading your orders…</p>
+      )}
 
       {status === "error" && (
         <p className="my-orders__note" role="alert">
@@ -133,7 +148,8 @@ export default function MyOrders({ userId }) {
 
       {status === "success" && orders.length === 0 && (
         <p className="my-orders__note">
-          You haven't ordered anything yet. <Link to="/shop">Visit the shop</Link>
+          You haven't ordered anything yet.{" "}
+          <Link to="/shop">Visit the shop</Link>
         </p>
       )}
 
@@ -144,29 +160,53 @@ export default function MyOrders({ userId }) {
               <div className="my-order__head">
                 <div>
                   <h3 className="my-order__id">Order #{order.id}</h3>
-                  <p className="my-order__date">{formatDate(order.created_at)}</p>
+                  <p className="my-order__date">
+                    {formatDate(order.created_at)}
+                  </p>
                 </div>
-                <span className="my-order__status">{statusLabels[order.status] ?? order.status}</span>
+                <span className="my-order__status">
+                  {statusLabels[order.status] ?? order.status}
+                </span>
               </div>
 
               <ul className="my-order__items">
-                {order.items.map((item) => (
-                  <li key={item.id}>
-                    <span>
-                      {item.name} <span className="my-order__qty">× {item.quantity}</span>
-                    </span>
-                    <span>{formatPrice(Number(item.unit_price) * item.quantity)}</span>
-                    <div className="my-order__again">
-                      <BuyAgain
-                        item={item}
-                        flower={flowers ? (flowers[item.flower_id] ?? null) : undefined}
-                      />
-                    </div>
-                  </li>
-                ))}
+                {order.items.map((item) => {
+                  const flower = flowers
+                    ? (flowers[item.flower_id] ?? null)
+                    : undefined;
+                  // Opens the flower's page; a flower that was deleted from the shop has no page
+                  const hasPage = Boolean(item.flower_id) && flower !== null;
+                  return (
+                    <li key={item.id}>
+                      <span>
+                        {hasPage ? (
+                          <Link
+                            to={`/shop/${item.flower_id}`}
+                            className="my-order__name"
+                          >
+                            {item.name}
+                          </Link>
+                        ) : (
+                          item.name
+                        )}{" "}
+                        <span className="my-order__qty">× {item.quantity}</span>
+                      </span>
+                      <span>
+                        {formatPrice(Number(item.unit_price) * item.quantity)}
+                      </span>
+                      <div className="my-order__again">
+                        <BuyAgain item={item} flower={flower} />
+                      </div>
+                    </li>
+                  );
+                })}
               </ul>
 
-              {order.address && <p className="my-order__address">Delivery to: {order.address}</p>}
+              {order.address && (
+                <p className="my-order__address">
+                  Delivery to: {order.address}
+                </p>
+              )}
 
               <p className="my-order__total">
                 <span>Total</span>
@@ -183,7 +223,9 @@ export default function MyOrders({ userId }) {
                 </p>
               )}
               {order.status === "delivered" && (
-                <p className="my-order__delivery-time">Your flowers have been delivered. Enjoy!</p>
+                <p className="my-order__delivery-time">
+                  Your flowers have been delivered. Enjoy!
+                </p>
               )}
             </li>
           ))}

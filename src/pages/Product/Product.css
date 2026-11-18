@@ -405,55 +405,27 @@
   color: var(--color-text-muted);
 }
 
-.product-buy {
+/* "You have N in your basket · View basket" under "Add to basket" */
+.product-basket {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--color-green);
 }
 
-.product-buy__stepper {
-  display: inline-flex;
-  align-items: center;
-  min-height: 48px;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  background: var(--color-surface);
-}
-
-.product-buy__stepper button {
-  display: grid;
-  place-items: center;
-  width: 46px;
-  height: 46px;
-  font-size: 20px;
-  line-height: 1;
-  color: var(--color-rust);
-  transition: background-color 0.2s;
-}
-
-.product-buy__stepper button:hover:not(:disabled) {
-  background: var(--color-sand);
-}
-
-.product-buy__stepper button:disabled {
-  color: #c4c0b8;
-  cursor: default;
-}
-
-.product-buy__stepper span {
-  min-width: 32px;
-  font-weight: 600;
-  text-align: center;
-  color: var(--color-ink);
-}
-
-.product-buy__cart {
-  flex: 1;
-}
-
-.product-buy__icon {
+.product-basket__icon {
+  flex: none;
   width: 18px;
   height: 18px;
+  margin-top: 1px;
+}
+
+.product-basket__link {
+  font-weight: 600;
+  color: var(--color-rust);
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 /* ---------- Desktop ---------- */
@@ -567,17 +539,6 @@
 .buy-dialog__unit {
   font-size: 13px;
   color: var(--color-text-muted);
-}
-
-.buy-dialog__stepper {
-  min-height: 0;
-  margin-top: 8px;
-}
-
-.buy-dialog__stepper button {
-  width: 36px;
-  height: 36px;
-  font-size: 18px;
 }
 
 .buy-dialog__total {
@@ -882,4 +843,58 @@
 .color-picker__option input:focus-visible + span {
   outline: 2px solid var(--color-rust);
   outline-offset: 2px;
+}
+
+/* ---------- FAQ under the reviews (ProductFaq.jsx) ---------- */
+.product-faq {
+  margin-top: 48px;
+  padding-top: 32px;
+  border-top: 1px solid var(--color-border);
+}
+
+.product-faq__title {
+  font-size: clamp(28px, 7vw, 36px);
+}
+
+.product-faq__ask {
+  padding: 24px;
+  border-radius: var(--radius-md);
+  background: var(--color-sand);
+}
+
+.product-faq__ask-title {
+  font-family: var(--font-serif);
+  font-size: 24px;
+  line-height: 1.2;
+  color: var(--color-ink);
+}
+
+.product-faq__ask-text {
+  margin: 6px 0 14px;
+  font-size: 15px;
+  color: var(--color-text-muted);
+}
+
+.product-faq__ask-link {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-rust);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.product-faq__ask-link:hover {
+  color: var(--color-ink);
+}
+
+@media (min-width: 1024px) {
+  .product-faq {
+    margin-top: 72px;
+  }
+
+  /* Level with the first question, like the form on the home page */
+  .product-faq__ask {
+    margin-top: 72px;
+    padding: 32px;
+  }
 }

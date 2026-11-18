@@ -142,6 +142,20 @@
   height: 14px;
 }
 
+/* Flower name: opens its page */
+.my-order__name {
+  color: var(--color-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--color-border);
+  text-underline-offset: 3px;
+  transition: color 0.2s, text-decoration-color 0.2s;
+}
+
+.my-order__name:hover {
+  color: var(--color-rust);
+  text-decoration-color: currentColor;
+}
+
 .my-order__qty {
   color: var(--color-text-muted);
 }

@@ -57,7 +57,9 @@ function validate(v) {
   return errors;
 }
 
-function QuestionForm() {
+// The question form. `heading={false}` leaves out its own title and card look
+// (used in the pop-up on the flower page, which has its own title).
+export function QuestionForm({ heading = true }) {
   const { user } = useAuth();
   const emptyForm = () => ({
     name: "",
@@ -108,7 +110,7 @@ function QuestionForm() {
 
   if (sentTo) {
     return (
-      <div className="faq-form">
+      <div className={heading ? "faq-form" : "faq-form faq-form--plain"}>
         <h3 className="faq-form__title">Thank you!</h3>
         <FormAlert type="success">
           We’ve received your question and will reply to <strong>{sentTo}</strong> soon.
@@ -121,9 +123,15 @@ function QuestionForm() {
   }
 
   return (
-    <div className="faq-form">
-      <h3 className="faq-form__title">Still have a question?</h3>
-      <p className="faq-form__desc">Write to us and a florist will answer by email.</p>
+    <div className={heading ? "faq-form" : "faq-form faq-form--plain"}>
+      {heading ? (
+        <>
+          <h3 className="faq-form__title">Still have a question?</h3>
+          <p className="faq-form__desc">Write to us and a florist will answer by email.</p>
+        </>
+      ) : (
+        <p className="faq-form__desc">Write to us and a florist will answer by email.</p>
+      )}
 
       <form
         className={formStyles.form}
@@ -179,6 +187,21 @@ function QuestionForm() {
   );
 }
 
+// The questions that open and close. Also shown on every flower page (ProductFaq.jsx).
+export function FaqList() {
+  return (
+    // <details> opens and closes by itself, works with keyboard and screen readers, no JS needed
+    <div className="faq__list">
+      {faqs.map(({ q, a }) => (
+        <details key={q} className="faq-item">
+          <summary className="faq-item__q">{q}</summary>
+          <p className="faq-item__a">{a}</p>
+        </details>
+      ))}
+    </div>
+  );
+}
+
 export default function Faq() {
   return (
     <section className="section faq-section" id="faq" aria-labelledby="faq-title">
@@ -189,15 +212,7 @@ export default function Faq() {
             Questions &amp; Answers
           </h2>
 
-          {/* <details> opens and closes by itself, works with keyboard and screen readers, no JS needed */}
-          <div className="faq__list">
-            {faqs.map(({ q, a }) => (
-              <details key={q} className="faq-item">
-                <summary className="faq-item__q">{q}</summary>
-                <p className="faq-item__a">{a}</p>
-              </details>
-            ))}
-          </div>
+          <FaqList />
         </div>
 
         <QuestionForm />

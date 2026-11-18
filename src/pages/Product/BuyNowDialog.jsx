@@ -4,20 +4,23 @@ import { placeSingleOrder } from "../../api/orders.js";
 import { formatPrice } from "../../lib/format.js";
 import { CheckCircleIcon, CloseIcon } from "../../components/Icons.jsx";
 import ShippingForm from "../../components/ShippingForm.jsx";
+import QuantityPicker from "../../components/QuantityPicker.jsx";
 
 const MAX_QUANTITY = 99;
 
 // "Buy now" pop-up: order this one flower straight away.
 // The basket is not used and not changed.
+// `initialQuantity` = the quantity chosen on the page; it can still be changed here.
 // `onOrdered` runs once the order is placed (the page then loads the new stock).
-export default function BuyNowDialog({ flower, onClose, onOrdered }) {
+export default function BuyNowDialog({ flower, initialQuantity = 1, onClose, onOrdered }) {
   const dialogRef = useRef(null);
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState(initialQuantity);
   const [orderId, setOrderId] = useState(null);
 
   const unitPrice = flower.salePrice ?? flower.price;
   // Can't order more than there are in stock (the database checks this too)
   const max = Math.max(1, Math.min(flower.stock, MAX_QUANTITY));
+  const valid = quantity >= 1 && quantity <= max;
 
   // <dialog> gives us a focus trap and closing with Escape for free.
   useEffect(() => {
@@ -75,31 +78,14 @@ export default function BuyNowDialog({ flower, onClose, onOrdered }) {
                 <p className="buy-dialog__name">{flower.name}</p>
                 {flower.color && <p className="buy-dialog__unit">Colour: {flower.color}</p>}
                 <p className="buy-dialog__unit">{formatPrice(unitPrice)} each</p>
-                <div className="product-buy__stepper buy-dialog__stepper" role="group" aria-label="Quantity">
-                  <button
-                    type="button"
-                    onClick={() => setQuantity((q) => q - 1)}
-                    disabled={quantity <= 1}
-                    aria-label="Decrease quantity"
-                  >
-                    −
-                  </button>
-                  <span aria-live="polite">{quantity}</span>
-                  <button
-                    type="button"
-                    onClick={() => setQuantity((q) => q + 1)}
-                    disabled={quantity >= max}
-                    aria-label="Increase quantity"
-                  >
-                    +
-                  </button>
-                </div>
+                <QuantityPicker value={quantity} onChange={setQuantity} max={max} small />
               </div>
               <p className="buy-dialog__total">{formatPrice(unitPrice * quantity)}</p>
             </div>
 
             <ShippingForm
               onSubmit={handleOrder}
+              disabled={!valid}
               submitLabel={`Place order · ${formatPrice(unitPrice * quantity)}`}
             />
           </>

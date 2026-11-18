@@ -12,6 +12,8 @@ import {
   TruckIcon,
 } from "../../components/Icons.jsx";
 import BuyNowDialog from "./BuyNowDialog.jsx";
+import QuantityPicker from "../../components/QuantityPicker.jsx";
+import ProductFaq from "./ProductFaq.jsx";
 import ImageViewer from "./ImageViewer.jsx";
 import ProductReviews from "./ProductReviews.jsx";
 import Stars from "../../components/Stars.jsx";
@@ -238,7 +240,7 @@ function Gallery({ images, name }) {
 
 // Shown instead of the basket buttons when the flower is sold out.
 // The number in stock itself is not shown on this page (team decision);
-// the "+" buttons simply stop at it.
+// the quantity box only says so when more is typed in than there are.
 function SoldOutNote() {
   return (
     <p className="product-stock product-stock--soldout" role="status">
@@ -247,14 +249,29 @@ function SoldOutNote() {
   );
 }
 
-// "Add to basket" (or the quantity in the basket) + "Buy now".
+// Quantity + "Add to basket" + "Buy now". The quantity is chosen first (buttons or typing)
+// and is used by both buttons.
 // Guests are sent to sign in first for "Buy now", then come back to this page.
 // `onOrdered` runs after a "Buy now" order, to load the new stock.
 function BuyBox({ flower, onOrdered }) {
-  const { isGuest, lines } = useCart();
+  const { isGuest, lines, add } = useCart();
   const { pathname } = useLocation();
   const [buying, setBuying] = useState(false);
+  const [quantity, setQuantity] = useState(1);
+  const [added, setAdded] = useState(null); // what the last "Add to basket" did, for the message
   const inBasket = lines.find((line) => line.flowerId === flower.id)?.quantity ?? 0;
+
+  // Can't order more than there are in stock (the database checks this too)
+  const max = Math.min(flower.stock, MAX_QUANTITY);
+  const valid = quantity >= 1 && quantity <= max;
+  // The basket can't hold more than the stock either, so this is what still fits in it
+  const room = Math.max(0, max - inBasket);
+
+  const addToBasket = () => {
+    const amount = Math.min(quantity, room);
+    add(flower.id, amount);
+    setAdded({ amount, capped: amount < quantity });
+  };
 
   if (flower.stock === 0 && !buying) {
     return (
@@ -269,7 +286,38 @@ function BuyBox({ flower, onOrdered }) {
 
   return (
     <div className="product-actions">
-      <BasketControl flower={flower} quantity={inBasket} />
+      <QuantityPicker
+        value={quantity}
+        onChange={(n) => {
+          setQuantity(n);
+          setAdded(null);
+        }}
+        max={max}
+      />
+
+      <button
+        className="btn btn--ink btn--block"
+        onClick={addToBasket}
+        disabled={!valid || room === 0}
+      >
+        {room === 0 ? "All we have is in your basket" : "Add to basket"}
+      </button>
+
+      {inBasket > 0 && (
+        <p className="product-basket" role="status">
+          <CheckIcon className="product-basket__icon" />
+          <span>
+            {added?.capped
+              ? `Added ${added.amount}: that’s all we have, so your basket now has ${inBasket}.`
+              : added
+                ? `Added to basket. You have ${inBasket} in your basket.`
+                : `You have ${inBasket} in your basket.`}{" "}
+            <Link to="/cart" className="product-basket__link">
+              View basket
+            </Link>
+          </span>
+        </p>
+      )}
 
       {isGuest ? (
         <>
@@ -288,64 +336,20 @@ function BuyBox({ flower, onOrdered }) {
         <button
           className="btn btn--rust btn--block"
           onClick={() => setBuying(true)}
+          disabled={!valid}
         >
           Buy now
         </button>
       )}
 
       {buying && (
-        <BuyNowDialog flower={flower} onClose={() => setBuying(false)} onOrdered={onOrdered} />
+        <BuyNowDialog
+          flower={flower}
+          initialQuantity={Math.min(quantity, max) || 1}
+          onClose={() => setBuying(false)}
+          onOrdered={onOrdered}
+        />
       )}
-    </div>
-  );
-}
-
-function BasketControl({ flower, quantity }) {
-  const { add, setQuantity } = useCart();
-  // Can't put more in the basket than there are in stock
-  const max = Math.min(flower.stock, MAX_QUANTITY);
-
-  if (quantity === 0) {
-    return (
-      <button
-        className="btn btn--ink btn--block"
-        onClick={() => add(flower.id)}
-        disabled={max === 0}
-      >
-        Add to basket
-      </button>
-    );
-  }
-
-  return (
-    <div className="product-buy">
-      <div
-        className="product-buy__stepper"
-        role="group"
-        aria-label={`${flower.name} in basket`}
-      >
-        <button
-          onClick={() => setQuantity(flower.id, quantity - 1)}
-          aria-label={
-            quantity === 1
-              ? `Remove ${flower.name} from basket`
-              : "Decrease quantity"
-          }
-        >
-          −
-        </button>
-        <span aria-live="polite">{quantity}</span>
-        <button
-          onClick={() => setQuantity(flower.id, quantity + 1)}
-          disabled={quantity >= max}
-          aria-label="Increase quantity"
-        >
-          +
-        </button>
-      </div>
-      <Link to="/cart" className="btn btn--light product-buy__cart">
-        <CheckIcon className="product-buy__icon" /> In basket · View
-      </Link>
     </div>
   );
 }
@@ -472,6 +476,7 @@ function FlowerWithReviews({ flower, onOrdered }) {
     <>
       <ProductDetails key={flower.id} flower={flower} onOrdered={onOrdered} rating={reviews} />
       <ProductReviews flower={flower} {...reviews} />
+      <ProductFaq />
     </>
   );
 }

@@ -101,6 +101,18 @@
   margin-top: 16px;
 }
 
+/* Form inside the pop-up on the flower page: no card of its own */
+.faq-form.faq-form--plain { /* two classes, so the desktop padding below doesn't win */
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.faq-form--plain .faq-form__desc {
+  margin-top: -6px;
+}
+
 /* Desktop: questions on the left, form on the right */
 @media (min-width: 1024px) {
   .faq {

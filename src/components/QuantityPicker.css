@@ -1,0 +1,97 @@
+/* Quantity box with − / + (QuantityPicker.jsx) */
+.qty {
+  display: grid;
+  gap: 8px;
+}
+
+.qty__label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+}
+
+.qty__box {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  min-height: 48px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+}
+
+.qty__box:focus-within {
+  border-color: var(--color-green);
+}
+
+.qty__box.is-invalid {
+  border-color: var(--color-rust);
+}
+
+.qty__box button {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--color-rust);
+  transition: background-color 0.2s;
+}
+
+.qty__box button:hover:not(:disabled) {
+  background: var(--color-sand);
+}
+
+.qty__box button:disabled {
+  color: #c4c0b8;
+  cursor: default;
+}
+
+.qty__box input {
+  width: 52px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 16px; /* 16px stops iPhones from zooming in */
+  font-weight: 600;
+  text-align: center;
+  color: var(--color-ink);
+}
+
+.qty__box input:focus {
+  outline: none;
+}
+
+.qty__warning {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-rust);
+}
+
+.qty__fix {
+  font: inherit;
+  font-weight: 600;
+  color: var(--color-rust);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Smaller version in the "Buy now" pop-up */
+.qty--small .qty__box {
+  min-height: 0;
+  margin-top: 8px;
+}
+
+.qty--small .qty__box button {
+  width: 36px;
+  height: 36px;
+  font-size: 18px;
+}
+
+.qty--small .qty__box input {
+  width: 44px;
+}
