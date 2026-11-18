@@ -180,6 +180,8 @@ begin
 end;
 $$;
 
+-- NOTE: supabase/review-photos.sql replaces save_review() with a version that also takes photos.
+--       If you run this file again, run review-photos.sql again afterwards.
 -- Only signed-in customers may call these; the helpers are used inside them only.
 revoke execute on function public.reviewable_flower_id(bigint) from public, anon, authenticated;
 revoke execute on function public.can_review(bigint) from public, anon;

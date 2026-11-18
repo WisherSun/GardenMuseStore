@@ -42,7 +42,7 @@ export default function AdminReviews() {
     if (!window.confirm(`Delete the review by ${review.author} of “${review.flowerName}”? This cannot be undone.`)) return;
     setMessage(null);
     try {
-      await deleteReview(review.id);
+      await deleteReview(review.id, review.photos); // its photo files are deleted too
       setRows((current) => current.filter((r) => r.id !== review.id));
       setMessage({ type: "success", text: `The review by ${review.author} was deleted.` });
     } catch (error) {
@@ -119,6 +119,15 @@ export default function AdminReviews() {
                     {review.edited && " · edited"}
                   </p>
                   <p className="admin-review__text">{review.text}</p>
+                  {review.photos.length > 0 && (
+                    <div className="admin-review__photos">
+                      {review.photos.map((photo, i) => (
+                        <a key={photo.path} href={photo.url} target="_blank" rel="noreferrer" aria-label={`Open photo ${i + 1} in a new tab`}>
+                          <img src={photo.url} alt="" loading="lazy" />
+                        </a>
+                      ))}
+                    </div>
+                  )}
                   <button className="admin-action admin-action--danger admin-review__delete" onClick={() => handleDelete(review)}>
                     Delete
                   </button>

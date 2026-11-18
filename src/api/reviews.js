@@ -7,7 +7,11 @@ function requireSupabase() {
   if (!supabase) throw new Error("Supabase is not configured");
 }
 
-const COLUMNS = "id, user_id, product_id, mark, review_text, author_name, created_at, updated_at";
+const COLUMNS = "id, user_id, product_id, mark, review_text, author_name, photos, created_at, updated_at";
+
+// Photo files are in Supabase Storage (see supabase/review-photos.sql); the review keeps their paths.
+const PHOTO_BUCKET = "review-photos";
+const photoUrl = (path) => supabase.storage.from(PHOTO_BUCKET).getPublicUrl(path).data.publicUrl;
 
 function toReview(row) {
   return {
@@ -19,6 +23,8 @@ function toReview(row) {
     author: row.author_name,
     createdAt: row.created_at,
     edited: row.updated_at !== row.created_at,
+    // [{ path, url }]: `path` is what the database keeps, `url` is for <img>
+    photos: (row.photos ?? []).map((path) => ({ path, url: photoUrl(path) })),
   };
 }
 
@@ -43,24 +49,48 @@ export async function checkCanReview(productId) {
 }
 
 // Writes the customer's review, or changes it if they already wrote one. Returns its id.
-export async function saveReview(productId, mark, text) {
+// `photoPaths` = all photos the review should have (already uploaded with uploadReviewPhoto).
+export async function saveReview(productId, mark, text, photoPaths = []) {
   requireSupabase();
   const { data, error } = await supabase.rpc("save_review", {
     p_flower_id: productId,
     p_mark: mark,
     p_text: text,
+    p_photos: photoPaths,
   });
   if (error) throw error;
   return data;
 }
 
-// Customers can delete their own review, admins any review.
+// Uploads one (already shrunk) photo into the customer's own folder and returns its path.
+// A random name, so two photos never overwrite each other.
+export async function uploadReviewPhoto(userId, blob) {
+  requireSupabase();
+  const ext = blob.type === "image/webp" ? "webp" : blob.type === "image/png" ? "png" : "jpg";
+  const path = `${userId}/${crypto.randomUUID()}.${ext}`;
+  const { error } = await supabase.storage
+    .from(PHOTO_BUCKET)
+    .upload(path, blob, { contentType: blob.type, cacheControl: "31536000", upsert: false });
+  if (error) throw error;
+  return path;
+}
+
+// Removes photo files that no review uses any more. Failing here is not shown to anyone:
+// the review itself is already fine, the file just stays in Storage unused.
+export async function deleteReviewPhotos(paths) {
+  if (!supabase || paths.length === 0) return;
+  const { error } = await supabase.storage.from(PHOTO_BUCKET).remove(paths);
+  if (error) console.error("Could not delete review photos:", error);
+}
+
+// Customers can delete their own review, admins any review. Its photo files are removed too.
 // With RLS a blocked delete returns no error, just no rows, so we ask for the row back.
-export async function deleteReview(id) {
+export async function deleteReview(id, photos = []) {
   requireSupabase();
   const { data, error } = await supabase.from("Reviews").delete().eq("id", id).select("id");
   if (error) throw error;
   if (!data || data.length === 0) throw new Error("Not allowed, or the review no longer exists.");
+  await deleteReviewPhotos(photos.map((p) => p.path));
 }
 
 // For the admin panel: every review with the flower's name and colour, newest first.

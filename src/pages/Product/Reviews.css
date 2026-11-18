@@ -97,6 +97,40 @@
   overflow-wrap: anywhere;
 }
 
+/* Customer photos under the review text; a click opens them full screen */
+.review__photos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.review__photo {
+  display: block;
+  width: 84px;
+  height: 84px;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background: var(--color-sand);
+  cursor: zoom-in;
+}
+
+.review__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+
+.review__photo:hover img {
+  transform: scale(1.06);
+}
+
+.review__photo:focus-visible {
+  outline: 2px solid var(--color-rust);
+  outline-offset: 2px;
+}
+
 /* ---------- Form ---------- */
 .review-form {
   display: grid;
@@ -201,6 +235,97 @@
   margin-top: 6px;
   font-size: 13px;
   color: var(--color-rust);
+}
+
+.review-form__optional {
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--color-text-muted);
+}
+
+.review-form__hint {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+/* ---------- Photo picker ---------- */
+.photo-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.photo-picker__item {
+  position: relative;
+  width: 88px;
+  height: 88px;
+}
+
+.photo-picker__item img {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  background: var(--color-sand);
+}
+
+/* Round × in the corner of each chosen photo */
+.photo-picker__remove {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--color-ink);
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(13, 40, 33, 0.25);
+}
+
+.photo-picker__remove svg {
+  width: 14px;
+  height: 14px;
+}
+
+.photo-picker__remove:hover {
+  background: var(--color-rust);
+}
+
+/* Dashed "+ Add photo" tile; the real file input inside is hidden */
+.photo-picker__add {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 4px;
+  width: 88px;
+  height: 88px;
+  border: 1.5px dashed #d6d0c6;
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-rust);
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.photo-picker__add:hover {
+  border-color: var(--color-rust);
+  background: #fff;
+}
+
+.photo-picker li:has(input:focus-visible) .photo-picker__add {
+  outline: 2px solid var(--color-rust);
+  outline-offset: 2px;
+}
+
+.photo-picker__add-icon {
+  width: 22px;
+  height: 22px;
 }
 
 .review-form__alert {

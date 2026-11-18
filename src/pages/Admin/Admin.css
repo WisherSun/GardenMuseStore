@@ -299,6 +299,22 @@
   overflow-wrap: anywhere;
 }
 
+/* Customer photos: open full size in a new tab */
+.admin-review__photos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.admin-review__photos img {
+  display: block;
+  width: 64px;
+  height: 64px;
+  border-radius: 6px;
+  object-fit: cover;
+  background: var(--color-sand);
+}
+
 .admin-review__delete {
   justify-self: start;
   flex: none;
