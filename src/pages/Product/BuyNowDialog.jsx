@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
-import { placeSingleOrder } from "../../api/orders.js";
+import { placeGuestOrder, placeSingleOrder } from "../../api/orders.js";
+import { useCart } from "../../hooks/useCart.js";
 import { formatPrice } from "../../lib/format.js";
 import { CheckCircleIcon, CloseIcon } from "../../components/Icons.jsx";
 import ShippingForm from "../../components/ShippingForm.jsx";
@@ -16,6 +17,8 @@ export default function BuyNowDialog({ flower, initialQuantity = 1, onClose, onO
   const dialogRef = useRef(null);
   const [quantity, setQuantity] = useState(initialQuantity);
   const [orderId, setOrderId] = useState(null);
+  const [guestEmail, setGuestEmail] = useState(null);
+  const { isGuest } = useCart();
 
   const unitPrice = flower.salePrice ?? flower.price;
   // Can't order more than there are in stock (the database checks this too)
@@ -29,8 +32,13 @@ export default function BuyNowDialog({ flower, initialQuantity = 1, onClose, onO
     return () => dialog.close();
   }, []);
 
+  // Guests order with their email instead of an account (supabase/guest-orders.sql)
   const handleOrder = async (address) => {
-    setOrderId(await placeSingleOrder(flower.id, quantity, address));
+    const id = isGuest
+      ? await placeGuestOrder([{ flowerId: flower.id, quantity }], address)
+      : await placeSingleOrder(flower.id, quantity, address);
+    setOrderId(id);
+    setGuestEmail(isGuest ? address.email : null);
     onOrdered?.();
   };
 
@@ -59,15 +67,24 @@ export default function BuyNowDialog({ flower, initialQuantity = 1, onClose, onO
             <CheckCircleIcon className="buy-dialog__done-icon" />
             <p className="buy-dialog__done-title">Thank you for your order!</p>
             <p>
-              Your order <strong>#{orderId}</strong> has been placed. We’ll be in touch about delivery.
+              Your order <strong>#{orderId}</strong> has been placed. We’ll be in touch
+              {guestEmail ? (
+                <>
+                  {" "}at <strong>{guestEmail}</strong>
+                </>
+              ) : null}{" "}
+              about delivery.
             </p>
             <div className="buy-dialog__done-actions">
               <Link to="/shop" className="btn btn--ink">
                 Continue shopping
               </Link>
-              <Link to="/account" className="btn btn--light">
-                My orders
-              </Link>
+              {/* Guest orders aren't linked to an account, so there is no "My orders" for them */}
+              {!guestEmail && (
+                <Link to="/account" className="btn btn--light">
+                  My orders
+                </Link>
+              )}
             </div>
           </div>
         ) : (
@@ -86,6 +103,7 @@ export default function BuyNowDialog({ flower, initialQuantity = 1, onClose, onO
             <ShippingForm
               onSubmit={handleOrder}
               disabled={!valid}
+              askEmail={isGuest}
               submitLabel={`Place order · ${formatPrice(unitPrice * quantity)}`}
             />
           </>

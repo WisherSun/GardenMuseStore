@@ -310,7 +310,8 @@
   color: var(--color-text-muted);
 }
 
-.cart-summary__guest a {
+.cart-summary__guest a,
+.cart-summary__signin {
   color: var(--color-rust);
   text-decoration: underline;
   text-underline-offset: 3px;

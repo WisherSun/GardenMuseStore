@@ -164,7 +164,8 @@ function CartItemSkeleton() {
   );
 }
 
-function OrderPlaced({ orderId }) {
+// `email` is set for guest orders: the shop contacts them there.
+function OrderPlaced({ orderId, email }) {
   return (
     <div className="cart-empty order-placed" role="status">
       <span className="cart-empty__icon order-placed__icon">
@@ -172,7 +173,13 @@ function OrderPlaced({ orderId }) {
       </span>
       <h2 className="cart-empty__title">Thank you for your order!</h2>
       <p>
-        Your order <strong>#{orderId}</strong> has been placed. We’ll be in touch about delivery.
+        Your order <strong>#{orderId}</strong> has been placed. We’ll be in touch
+        {email ? (
+          <>
+            {" "}at <strong>{email}</strong>
+          </>
+        ) : null}{" "}
+        about delivery.
       </p>
       <Link to="/shop" className="btn btn--ink">
         Continue shopping
@@ -185,10 +192,11 @@ export default function CartPage() {
   const { lines, status, error, isGuest, setQuantity, remove, clear, checkout, dismissError } = useCart();
   const { products, loading, failed, retry } = useBasketProducts(lines, remove);
 
-  const [placedOrderId, setPlacedOrderId] = useState(null);
+  const [placed, setPlaced] = useState(null); // { id, email } once the order is placed
 
   const handlePlaceOrder = async (address) => {
-    setPlacedOrderId(await checkout(address));
+    const id = await checkout(address);
+    setPlaced({ id, email: isGuest ? address.email : null });
   };
 
   const items = lines
@@ -223,8 +231,8 @@ export default function CartPage() {
           </div>
         )}
 
-        {placedOrderId ? (
-          <OrderPlaced orderId={placedOrderId} />
+        {placed ? (
+          <OrderPlaced orderId={placed.id} email={placed.email} />
         ) : showSkeleton ? (
           <ul className="cart-list" aria-busy="true" aria-label="Loading basket">
             {Array.from({ length: Math.max(lines.length, 2) }, (_, i) => (
@@ -292,26 +300,27 @@ export default function CartPage() {
                 </div>
               </dl>
 
-              {isGuest ? (
-                <>
-                  <Link to="/login" state={{ from: "/cart" }} className="btn btn--rust btn--block">
-                    Sign in to order
-                  </Link>
-                  <p className="cart-summary__note">
-                    Your basket is kept and moves to your account when you sign in.
-                  </p>
-                </>
-              ) : (
-                <>
-                  {stockProblem && (
-                    <p className="cart-summary__note cart-summary__note--warn" role="alert">
-                      Some flowers in your basket aren’t available in that quantity any more. Please fix them
-                      above to place your order.
-                    </p>
-                  )}
-                  <ShippingForm onSubmit={handlePlaceOrder} disabled={loading || stockProblem} />
-                </>
+              {/* Guests can order too (with their email); signing in is only offered */}
+              {isGuest && (
+                <p className="cart-summary__note">
+                  Ordering as a guest.{" "}
+                  <Link to="/login" state={{ from: "/cart" }} className="cart-summary__signin">
+                    Sign in
+                  </Link>{" "}
+                  to see your orders in your account later.
+                </p>
               )}
+              {stockProblem && (
+                <p className="cart-summary__note cart-summary__note--warn" role="alert">
+                  Some flowers in your basket aren’t available in that quantity any more. Please fix them
+                  above to place your order.
+                </p>
+              )}
+              <ShippingForm
+                onSubmit={handlePlaceOrder}
+                disabled={loading || stockProblem}
+                askEmail={isGuest}
+              />
             </aside>
           </div>
         )}

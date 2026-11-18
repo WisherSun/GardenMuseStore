@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { SelectField, TextField } from "../pages/Auth/AuthFields.jsx";
+import { validateEmail } from "../pages/Auth/validation.js";
 import { deliveryDateRange, formatDeliveryDate, slotLabel, slotsForDate } from "../lib/delivery.js";
 import "./ShippingForm.css";
 
@@ -11,6 +12,7 @@ import "./ShippingForm.css";
 const PHONE_PATTERN = /^\+?[0-9 ()-]{6,20}$/;
 
 const EMPTY_DELIVERY = {
+  email: "", // only asked from guests (askEmail), so the shop can contact them
   fullName: "",
   city: "",
   street: "",
@@ -21,9 +23,14 @@ const EMPTY_DELIVERY = {
   deliverySlot: "", // "morning" | "afternoon" | "evening", empty = any time
 };
 
-function validateDelivery(d) {
+function validateDelivery(d, askEmail) {
   const errors = {};
   const length = (value) => value.trim().length;
+
+  if (askEmail) {
+    const emailError = validateEmail(d.email);
+    if (emailError) errors.email = emailError;
+  }
 
   if (length(d.fullName) < 2) errors.fullName = "Enter the recipient’s name.";
   else if (length(d.fullName) > 100) errors.fullName = "The name is too long (100 characters max).";
@@ -58,13 +65,21 @@ function validateDelivery(d) {
 // Turns the database error into something a customer can read.
 function orderErrorMessage(err) {
   const message = err?.message ?? "";
+  // A database function that hasn't been created yet (its error lists every parameter name,
+  // so this has to come before the checks for "email", "quantity" etc.)
+  if (message.includes("place_guest_order")) return "Ordering without an account isn’t set up yet. Please sign in to order.";
+  if (message.includes("place_single_order")) return "“Buy now” isn’t set up yet. Please use the basket for now.";
   if (message.includes("basket is empty")) return "Your basket is empty.";
   if (message.includes("sign in")) return "Please sign in to place an order.";
+  if (message.includes("email")) return "Please enter a valid email address.";
+  if (message.includes("basket could not be read") || message.includes("Too many different"))
+    return "Something is wrong with your basket. Please check it and try again.";
+  if (message.includes("in your basket is no longer available"))
+    return "A flower in your basket is no longer available. Please remove it.";
   if (message.includes("no longer available")) return "Sorry, this flower is no longer available.";
   // Stock messages from supabase/flower-stock.sql are already written for customers
   if (message.includes("sold out") || message.includes(" left")) return message;
   if (message.includes("quantity")) return "Please choose a quantity from 1 to 99.";
-  if (message.includes("place_single_order")) return "“Buy now” isn’t set up yet. Please use the basket for now.";
   if (message.includes("already passed")) return "That delivery time has already passed. Please choose a later one.";
   if (message.includes("delivery")) return "Please check the delivery date and time.";
   if (message.includes("phone number")) return "Please enter a valid phone number.";
@@ -76,7 +91,8 @@ function orderErrorMessage(err) {
   return "We couldn’t place your order. Please try again.";
 }
 
-export default function ShippingForm({ onSubmit, disabled = false, submitLabel = "Place order" }) {
+// `askEmail`: also ask for an email (guests, who have no account the shop could look up).
+export default function ShippingForm({ onSubmit, disabled = false, submitLabel = "Place order", askEmail = false }) {
   const [delivery, setDelivery] = useState(EMPTY_DELIVERY);
   const [errors, setErrors] = useState({});
   const [placing, setPlacing] = useState(false);
@@ -103,7 +119,7 @@ export default function ShippingForm({ onSubmit, disabled = false, submitLabel =
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const found = validateDelivery(delivery);
+    const found = validateDelivery(delivery, askEmail);
     setErrors(found);
     if (Object.keys(found).length) return;
 
@@ -124,6 +140,22 @@ export default function ShippingForm({ onSubmit, disabled = false, submitLabel =
 
   return (
     <form className="checkout-form" onSubmit={handleSubmit} noValidate>
+      {askEmail && (
+        <>
+          <h3 className="checkout-form__title">Your contact</h3>
+          <TextField
+            label="Email *"
+            type="email"
+            inputMode="email"
+            autoComplete="email"
+            placeholder="you@example.com"
+            hint="We’ll use it only to contact you about this order."
+            value={delivery.email}
+            onChange={change("email")}
+            error={errors.email}
+          />
+        </>
+      )}
       <h3 className="checkout-form__title">Shipping address</h3>
       <TextField
         label="Name *"

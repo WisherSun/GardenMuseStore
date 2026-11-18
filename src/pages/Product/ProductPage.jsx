@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useLocation, useNavigate, useParams } from "react-router";
+import { Link, useNavigate, useParams } from "react-router";
 import { fetchFlowerById } from "../../api/flowers.js";
 import { useCart } from "../../hooks/useCart.js";
 import { formatPrice } from "../../lib/format.js";
@@ -251,11 +251,9 @@ function SoldOutNote() {
 
 // Quantity + "Add to basket" + "Buy now". The quantity is chosen first (buttons or typing)
 // and is used by both buttons.
-// Guests are sent to sign in first for "Buy now", then come back to this page.
 // `onOrdered` runs after a "Buy now" order, to load the new stock.
 function BuyBox({ flower, onOrdered }) {
-  const { isGuest, lines, add } = useCart();
-  const { pathname } = useLocation();
+  const { lines, add } = useCart();
   const [buying, setBuying] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(null); // what the last "Add to basket" did, for the message
@@ -319,28 +317,14 @@ function BuyBox({ flower, onOrdered }) {
         </p>
       )}
 
-      {isGuest ? (
-        <>
-          <Link
-            to="/login"
-            state={{ from: pathname }}
-            className="btn btn--rust btn--block"
-          >
-            Buy now
-          </Link>
-          <p className="product-actions__note">
-            You’ll be asked to sign in first.
-          </p>
-        </>
-      ) : (
-        <button
-          className="btn btn--rust btn--block"
-          onClick={() => setBuying(true)}
-          disabled={!valid}
-        >
-          Buy now
-        </button>
-      )}
+      {/* Guests can buy too: the pop-up then also asks for their email */}
+      <button
+        className="btn btn--rust btn--block"
+        onClick={() => setBuying(true)}
+        disabled={!valid}
+      >
+        Buy now
+      </button>
 
       {buying && (
         <BuyNowDialog

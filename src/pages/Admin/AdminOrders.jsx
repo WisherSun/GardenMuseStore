@@ -116,6 +116,8 @@ export default function AdminOrders() {
                   <h3 className="admin-order__id">Order #{order.id}</h3>
                   <p className="admin-order__meta">
                     {formatDate(order.created_at)} · {order.customer_email ?? "Deleted user"}
+                    {/* Ordered without an account (supabase/guest-orders.sql) */}
+                    {order.is_guest && <span className="admin-badge admin-badge--guest">Guest</span>}
                   </p>
                 </div>
                 <label className="admin-order__status">

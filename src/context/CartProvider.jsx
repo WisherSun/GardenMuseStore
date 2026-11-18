@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useAuth } from "../hooks/useAuth.js";
 import { clearCartLines, deleteCartLine, fetchCartLines, saveCartLines } from "../api/cart.js";
-import { placeOrder } from "../api/orders.js";
+import { placeGuestOrder, placeOrder } from "../api/orders.js";
 import { CartContext } from "./cart-context.js";
 
 // Where a guest's basket is kept until they sign in.
@@ -168,10 +168,16 @@ export default function CartProvider({ children }) {
     });
   }, [userId, show, track]);
 
-  // Turns the saved basket into an order. `delivery` = { fullName, city, street, building, flat, phone }.
-  // Returns the new order id; throws if it fails (the basket is then left as it was).
+  // Turns the basket into an order. `delivery` = { fullName, city, street, building, flat, phone, ... }
+  // (+ `email` for guests). Returns the new order id; throws if it fails (the basket is then left as it was).
+  // Signed in: the database uses the saved basket. Guest: the basket from this browser is sent.
   const checkout = useCallback(async (delivery) => {
-    if (!userId) throw new Error("Please sign in to place an order");
+    if (!userId) {
+      const orderId = await placeGuestOrder(linesRef.current, delivery);
+      show([]);
+      writeGuestCart([]);
+      return orderId;
+    }
     await Promise.allSettled([...pendingRef.current]);
     const orderId = await placeOrder(delivery);
     show([]); // the database emptied the basket

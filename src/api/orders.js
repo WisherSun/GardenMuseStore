@@ -44,6 +44,30 @@ export async function placeSingleOrder(
   return data;
 }
 
+// Order without an account (see supabase/guest-orders.sql). Used by the basket and by
+// "Buy now" for guests. `items` = [{ flowerId, quantity }]; only ids and quantities are sent,
+// names, prices and stock are checked in the database. Returns the new order id.
+export async function placeGuestOrder(
+  items,
+  { email, fullName, city, street, building, flat, phone, deliveryDate, deliverySlot },
+) {
+  if (!supabase) throw new Error("Supabase is not configured");
+  const { data, error } = await supabase.rpc("place_guest_order", {
+    p_items: items.map(({ flowerId, quantity }) => ({ flower_id: flowerId, quantity })),
+    p_email: email,
+    p_full_name: fullName,
+    p_city: city,
+    p_street: street,
+    p_building: building,
+    p_flat: flat || null,
+    p_phone: phone || null,
+    p_delivery_date: deliveryDate || null,
+    p_delivery_slot: deliverySlot || null,
+  });
+  if (error) throw error;
+  return data;
+}
+
 // The signed-in customer's own orders, newest first, each with its items and total.
 // Filtered by user_id on purpose: an admin may read every order, but here we only want theirs.
 export async function fetchMyOrders(userId) {
