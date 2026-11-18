@@ -5,6 +5,7 @@ import Promises from "./Promises.jsx";
 import Products from "./Products.jsx";
 import Subscription from "./Subscription.jsx";
 import Craft from "./Craft.jsx";
+import StudioFilm from "./StudioFilm.jsx";
 import Newsletter from "./Newsletter.jsx";
 import Faq from "./Faq.jsx";
 
@@ -20,6 +21,7 @@ export default function HomePage() {
       <Products />
       <Subscription />
       <Craft />
+      <StudioFilm />
       <Newsletter />
       <Faq />
     </div>

@@ -97,6 +97,13 @@ export const CalendarIcon = (p) => (
   </svg>
 );
 
+// Filled triangle (play button)
+export const PlayIcon = (p) => (
+  <svg {...base} fill="currentColor" stroke="none" {...p}>
+    <path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5Z" />
+  </svg>
+);
+
 export const StarIcon = (p) => (
   <svg {...base} fill="currentColor" stroke="none" {...p}>
     <path d="M12 3l2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L12 16.8l-5.4 2.9 1.1-6.1-4.5-4.2 6.1-.8z" />
