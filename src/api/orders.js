@@ -59,7 +59,7 @@ export async function fetchMyOrders(userId) {
 
   const { data: items, error: itemsError } = await supabase
     .from("order_items")
-    .select("id, order_id, name, quantity, unit_price")
+    .select("id, order_id, flower_id, name, quantity, unit_price")
     .in(
       "order_id",
       orders.map((o) => o.id),

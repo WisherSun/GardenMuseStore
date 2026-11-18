@@ -88,8 +88,58 @@
 
 .my-order__items li {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
-  gap: 12px;
+  gap: 2px 12px;
+}
+
+.my-order__items li + li {
+  padding-top: 6px;
+}
+
+/* ---------- "Buy again" under each flower ---------- */
+.my-order__again {
+  flex-basis: 100%; /* its own line under the name and price */
+}
+
+.buy-again {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.buy-again__button {
+  padding: 4px 0;
+  color: var(--color-rust);
+}
+
+.buy-again__button:hover,
+.buy-again__link:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.buy-again__link {
+  color: var(--color-rust);
+}
+
+.buy-again--off {
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.buy-again--done {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 0;
+  color: var(--color-green);
+}
+
+.buy-again__icon {
+  width: 14px;
+  height: 14px;
 }
 
 .my-order__qty {
