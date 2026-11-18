@@ -1,5 +1,15 @@
 import { Link } from "react-router";
+import { FacebookIcon, InstagramIcon, PinterestIcon, TikTokIcon } from "./Icons.jsx";
 import "./Footer.css";
+
+// PLACEHOLDER links: they open the networks' home pages until the shop's own
+// profile addresses are filled in here (e.g. "https://www.instagram.com/gardenmuse").
+const SOCIAL_LINKS = [
+  { name: "Instagram", href: "https://www.instagram.com/", Icon: InstagramIcon },
+  { name: "Pinterest", href: "https://www.pinterest.com/", Icon: PinterestIcon },
+  { name: "Facebook", href: "https://www.facebook.com/", Icon: FacebookIcon },
+  { name: "TikTok", href: "https://www.tiktok.com/", Icon: TikTokIcon },
+];
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -16,6 +26,22 @@ export default function Footer() {
               Artisanal floral design atelier &amp; botanical studio. Cultivating natural elegance,
               wild arrangements, and botanical sculptures.
             </p>
+            <ul className="footer__social" aria-label="Garden Muse on social media">
+              {SOCIAL_LINKS.map(({ name, href, Icon }) => (
+                <li key={name}>
+                  <a
+                    href={href}
+                    className="footer__social-link"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`${name} (opens in a new tab)`}
+                    title={name}
+                  >
+                    <Icon />
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
 
           <div className="footer__col">

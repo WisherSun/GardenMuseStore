@@ -32,6 +32,41 @@
   color: var(--color-text-muted);
 }
 
+/* Round social media icons under the brand text */
+.footer__social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.footer__social-link {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  color: var(--color-ink);
+  transition: color 0.2s, border-color 0.2s, background-color 0.2s;
+}
+
+.footer__social-link svg {
+  width: 22px;
+  height: 22px;
+}
+
+.footer__social-link:hover {
+  border-color: var(--color-rust);
+  background: var(--color-sand);
+  color: var(--color-rust);
+}
+
+.footer__social-link:focus-visible {
+  outline: 2px solid var(--color-rust);
+  outline-offset: 2px;
+}
+
 .footer__col {
   min-width: 0;
 }

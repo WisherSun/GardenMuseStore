@@ -104,6 +104,36 @@ export const PlayIcon = (p) => (
   </svg>
 );
 
+// ---------- Social media (simple line versions, to match the other icons) ----------
+export const InstagramIcon = (p) => (
+  <svg {...base} {...p}>
+    <rect x="3.5" y="3.5" width="17" height="17" rx="5" />
+    <circle cx="12" cy="12" r="4" />
+    <circle cx="17.2" cy="6.8" r="0.4" fill="currentColor" />
+  </svg>
+);
+
+export const FacebookIcon = (p) => (
+  <svg {...base} {...p}>
+    <path d="M15 4.5h-2a3.5 3.5 0 0 0-3.5 3.5v3H7.5v3.5h2V20.5H13v-6h2.5l.5-3.5h-3V8.5a1 1 0 0 1 1-1h1.5Z" />
+  </svg>
+);
+
+export const PinterestIcon = (p) => (
+  <svg {...base} {...p}>
+    <circle cx="12" cy="12" r="8.5" />
+    <path d="m11 20.3 1.6-6.6" />
+    <path d="M9.4 14.2a3.6 3.6 0 0 1-.9-2.4c0-2.3 1.7-4.3 4.4-4.3 2.3 0 3.6 1.5 3.6 3.4 0 2.3-1 4.2-2.6 4.2-.9 0-1.5-.7-1.3-1.6" />
+  </svg>
+);
+
+export const TikTokIcon = (p) => (
+  <svg {...base} {...p}>
+    <path d="M13.5 4v10.3a3.3 3.3 0 1 1-3.3-3.3" />
+    <path d="M13.5 4c.3 2.4 2 4.1 4.5 4.3" />
+  </svg>
+);
+
 // Two bars (pause button)
 export const PauseIcon = (p) => (
   <svg {...base} fill="currentColor" stroke="none" {...p}>
