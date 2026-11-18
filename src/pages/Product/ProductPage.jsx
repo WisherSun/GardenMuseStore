@@ -477,9 +477,11 @@ function FlowerWithReviews({ flower, onOrdered }) {
 }
 
 // Average rating under the flower name, e.g. ★★★★½ 4.5 · 2 reviews.
-// Only shown once the flower has reviews; clicking it scrolls down to them.
-function RatingSummary({ count, average }) {
-  if (!count) return null;
+// No reviews yet: five empty stars and "No reviews yet" (like on the product cards).
+// Clicking it scrolls down to the reviews. Nothing is shown until the reviews have loaded,
+// so the empty stars don't flash up before the real rating.
+function RatingSummary({ status, count, average }) {
+  if (status !== "success") return null;
 
   const goToReviews = (e) => {
     e.preventDefault();
@@ -489,10 +491,16 @@ function RatingSummary({ count, average }) {
   return (
     <a href="#reviews" className="product-info__rating" onClick={goToReviews}>
       <Stars mark={average} />
-      <span className="product-info__rating-value">{average.toFixed(1)}</span>
-      <span className="product-info__rating-count">
-        {count} {count === 1 ? "review" : "reviews"}
-      </span>
+      {count > 0 ? (
+        <>
+          <span className="product-info__rating-value">{average.toFixed(1)}</span>
+          <span className="product-info__rating-count">
+            {count} {count === 1 ? "review" : "reviews"}
+          </span>
+        </>
+      ) : (
+        <span className="product-info__rating-count">No reviews yet</span>
+      )}
     </a>
   );
 }
@@ -548,7 +556,7 @@ function ProductDetails({ flower, onOrdered, rating }) {
           onSale && <span className="product-info__badge">Sale</span>
         )}
         <h1 className="product-info__name">{flower.name}</h1>
-        <RatingSummary count={rating.count} average={rating.average} />
+        <RatingSummary status={rating.status} count={rating.count} average={rating.average} />
 
         <p className="product-info__price">
           {onSale ? (
