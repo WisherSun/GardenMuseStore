@@ -3,6 +3,7 @@
 }
 
 .hero {
+  --hero-fade: 1.2s; /* how long one slide takes to fade into the next */
   position: relative;
   display: flex;
   align-items: flex-end;
@@ -26,11 +27,27 @@
   max-width: none;
   object-fit: cover;
   object-position: 50% 40%;
-  z-index: -2;
+  z-index: -3;
+  opacity: 0;
+  /* Leaving slide: stays fully visible under the new one until that has faded in,
+     then disappears at once. So the photos never show the dark green behind them. */
+  transition: opacity 0s var(--hero-fade);
   /* Tiny 32×16 copy of the photo (under 1 KB, built into the CSS). Stretched, it looks
      like a soft blur and is shown until the real photo arrives. */
   background: url("data:image/webp;base64,UklGRsgAAABXRUJQVlA4ILwAAACwBACdASogABAAPtFWpUwoJKOiMAgBABoJZwAM5ONBpyY5OmEkXIMERpys3PSAAP7lfhoVhLRMKbWS+gIe6zB8PqfmsMo74llDPlXLX4gBbs2FL/YGDH0DMb30B79Aw5+Z4Eour737nMLC6vEUq4kZHBjrHbZd+2cWo+KDbcphTP4WCzClWMosDtnDqKXtrruwotRwFd6CC6APdyHwIoHvhjSPtVGXZPm00Kaz24hqmNGneA/BCz4rU2deAA==")
     50% 40% / cover no-repeat;
+}
+
+/* Arriving slide: on top, fading in slowly */
+.hero__image.is-active {
+  z-index: -2;
+  opacity: 1;
+  transition: opacity var(--hero-fade) ease;
+}
+
+/* The blurry preview belongs to the first photo only */
+.hero__image:not(:first-of-type) {
+  background: none;
 }
 
 /* Darkens the bottom of the photo so white text stays readable */
@@ -46,6 +63,21 @@
 .hero__content {
   width: 100%;
   padding: 24px;
+}
+
+/* All slide texts in the same spot (one grid cell); the hero is as tall as the longest one */
+.hero__slides {
+  display: grid;
+}
+
+.hero__slide {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transition: opacity var(--hero-fade) ease;
+}
+
+.hero__slide.is-active {
+  opacity: 1;
 }
 
 .hero__label {
@@ -67,7 +99,10 @@
   background: var(--color-peach);
 }
 
+/* Font set here (not only via h1): slides 2 and 3 aren't headings, but must look the same */
 .hero__title {
+  font-family: var(--font-serif);
+  font-weight: 400;
   margin: 10px 0 24px;
   font-size: clamp(28px, 8vw, 64px);
   line-height: 1.2;
@@ -81,6 +116,13 @@
 .hero__actions {
   display: grid;
   gap: 12px;
+}
+
+/* Less motion wanted: no slow fades (the slideshow doesn't start by itself either, see Hero.jsx) */
+@media (prefers-reduced-motion: reduce) {
+  .hero {
+    --hero-fade: 0s;
+  }
 }
 
 /* ---------- Tablet ---------- */
