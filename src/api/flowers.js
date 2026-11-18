@@ -56,14 +56,42 @@ export async function fetchFlowerById(id) {
   return { ...product, colors };
 }
 
+// Every review's flower and stars, to work out the average for each card.
+// If the reviews can't be loaded, the shop still works, just without ratings.
+async function fetchAllMarks() {
+  const { data, error } = await supabase.from("Reviews").select("product_id, mark");
+  if (error) {
+    console.error("Could not load ratings:", error);
+    return [];
+  }
+  return data;
+}
+
 // For the shop and home page: one card per flower. Of a flower in several colours only
 // the first colour (lowest id) gets a card; the others are chosen on the flower page.
+// Each card also gets `rating` = { average, count } from the reviews of all its colours
+// (average rounded to one decimal, e.g. 4.5; count 0 = no reviews yet).
 export async function fetchFlowers({ limit } = {}) {
   if (!supabase) throw new Error("Supabase is not configured");
 
   // All rows, not just `limit`: some of them are extra colours that get no card of their own
-  const { data, error } = await supabase.from("Flowers").select("*").order("id");
+  const [{ data, error }, marks] = await Promise.all([
+    supabase.from("Flowers").select("*").order("id"),
+    fetchAllMarks(),
+  ]);
   if (error) throw error;
+
+  // Add up the stars per flower (all colours together)
+  const keyOfId = new Map(data.map((row) => [row.id, groupKey(row)]));
+  const totals = new Map(); // group key -> { sum, count }
+  for (const { product_id, mark } of marks) {
+    const key = keyOfId.get(product_id);
+    if (!key) continue;
+    const total = totals.get(key) ?? { sum: 0, count: 0 };
+    total.sum += mark;
+    total.count += 1;
+    totals.set(key, total);
+  }
 
   const seen = new Set();
   const cards = data.filter((row) => {
@@ -73,7 +101,13 @@ export async function fetchFlowers({ limit } = {}) {
     return true;
   });
 
-  return (limit ? cards.slice(0, limit) : cards).map(toProduct);
+  return (limit ? cards.slice(0, limit) : cards).map((row) => {
+    const total = totals.get(groupKey(row));
+    const rating = total
+      ? { average: Math.round((total.sum / total.count) * 10) / 10, count: total.count }
+      : { average: 0, count: 0 };
+    return { ...toProduct(row), rating };
+  });
 }
 
 // Loads only the given flowers (used by the basket page).

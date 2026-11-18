@@ -140,6 +140,22 @@
   position: relative;
 }
 
+/* Stars + average under the name, e.g. ★★★★½ 4.5 (2) */
+.product-card__rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--color-text-muted);
+  --star-size: 14px;
+}
+
+.product-card__rating-value {
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
 .product-card__desc {
   margin-top: 4px;
   font-size: 13px;

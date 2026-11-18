@@ -1,0 +1,31 @@
+/* Star rating (Stars.jsx). Size: set --star-size on .stars or a parent (default 16px). */
+.stars {
+  display: inline-flex;
+  gap: 2px;
+  vertical-align: middle;
+}
+
+.stars__star {
+  position: relative;
+  display: inline-block;
+  width: var(--star-size, 16px);
+  height: var(--star-size, 16px);
+}
+
+.stars__star svg {
+  display: block;
+  width: var(--star-size, 16px);
+  height: var(--star-size, 16px);
+}
+
+.stars__empty {
+  color: #ddd7cd;
+}
+
+/* Coloured copy on top, cut off on the right for half stars */
+.stars__fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  overflow: hidden;
+  color: var(--color-peach);
+}

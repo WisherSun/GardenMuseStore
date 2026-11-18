@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import { useCart } from "../hooks/useCart.js";
 import { formatPrice } from "../lib/format.js";
 import { CheckIcon, PlusIcon } from "./Icons.jsx";
+import Stars from "./Stars.jsx";
 import "./ProductCard.css";
 
 const MAX_QUANTITY = 99;
@@ -60,6 +61,20 @@ export default function ProductCard({ product }) {
             {product.name}
           </Link>
         </h3>
+        {product.rating && (
+          <p className="product-card__rating">
+            {/* No reviews yet: five empty stars, no number */}
+            <Stars mark={product.rating.average} />
+            {product.rating.count > 0 ? (
+              <>
+                <span className="product-card__rating-value">{product.rating.average.toFixed(1)}</span>
+                <span className="product-card__rating-count">({product.rating.count})</span>
+              </>
+            ) : (
+              <span className="visually-hidden">No reviews yet</span>
+            )}
+          </p>
+        )}
         <p className="product-card__desc">{product.description}</p>
         <div className="product-card__footer">
           {onSale ? (

@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { Link, useLocation } from "react-router";
 import { useAuth } from "../../hooks/useAuth.js";
-import { checkCanReview, deleteReview, fetchReviews, saveReview } from "../../api/reviews.js";
+import { checkCanReview, deleteReview, saveReview } from "../../api/reviews.js";
 import { StarIcon } from "../../components/Icons.jsx";
+import Stars from "../../components/Stars.jsx";
 import "./Reviews.css";
 
 const MIN_LENGTH = 10;
@@ -11,47 +12,11 @@ const MAX_LENGTH = 2000;
 const formatDate = (value) =>
   new Date(value).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
 
-// Five stars, the first `mark` of them filled. Read out as "4 out of 5 stars".
-function Stars({ mark, className = "" }) {
-  const filled = Math.round(mark);
-  return (
-    <span className={`stars ${className}`} role="img" aria-label={`${mark} out of 5 stars`}>
-      {[1, 2, 3, 4, 5].map((n) => (
-        <StarIcon key={n} className={n <= filled ? "stars__star is-filled" : "stars__star"} />
-      ))}
-    </span>
-  );
-}
-
 // The database messages are already written for customers; anything else gets a general one.
 function reviewErrorMessage(error) {
   const message = error?.message ?? "";
   if (/sign in|rating|characters|delivered/i.test(message)) return message;
   return "We couldn’t save your review. Please try again.";
-}
-
-// Loads the reviews of all colours of this flower. reload() fetches them again.
-function useReviews(idsKey) {
-  const [state, setState] = useState({ status: "loading", reviews: [] });
-  const [attempt, setAttempt] = useState(0);
-
-  useEffect(() => {
-    let ignore = false;
-    fetchReviews(idsKey.split(",").map(Number))
-      .then((reviews) => {
-        if (!ignore) setState({ status: "success", reviews });
-      })
-      .catch((error) => {
-        console.error("Could not load reviews:", error);
-        if (!ignore) setState({ status: "error", reviews: [] });
-      });
-    return () => {
-      ignore = true;
-    };
-  }, [idsKey, attempt]);
-
-  const reload = useCallback(() => setAttempt((n) => n + 1), []);
-  return { ...state, reload };
 }
 
 // Whether the signed-in customer may review this flower (the database decides).
@@ -218,18 +183,15 @@ function ReviewForm({ productId, existing, onCancel, onSaved, onDeleted }) {
 
 // Reviews section under the flower. All colours of a flower share one set of reviews;
 // each review says which colour the customer received.
-export default function ProductReviews({ flower }) {
+// The reviews come from useReviews() in ProductPage (shared with the rating next to the name).
+export default function ProductReviews({ flower, status, reviews, count, average, reload }) {
   const { user, loading: authLoading } = useAuth();
   const { pathname } = useLocation();
   const colors = flower.colors?.length ? flower.colors : null;
-  const idsKey = colors ? colors.map((c) => c.id).join(",") : String(flower.id);
-  const { status, reviews, reload } = useReviews(idsKey);
   const canReview = useCanReview(flower.id, user?.id ?? null);
   const [editing, setEditing] = useState(false);
 
   const mine = user ? reviews.find((r) => r.userId === user.id) : null;
-  const count = reviews.length;
-  const average = count ? reviews.reduce((sum, r) => sum + r.mark, 0) / count : 0;
   const colorOf = (productId) => colors?.find((c) => c.id === productId)?.color ?? null;
 
   const done = () => {
@@ -276,7 +238,7 @@ export default function ProductReviews({ flower }) {
           </h2>
           {count > 0 && (
             <p className="reviews__summary">
-              <Stars mark={Math.round(average * 10) / 10} />
+              <Stars mark={average} />
               <strong>{average.toFixed(1)}</strong> out of 5 · {count} {count === 1 ? "review" : "reviews"}
             </p>
           )}

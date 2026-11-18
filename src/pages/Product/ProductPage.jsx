@@ -14,6 +14,8 @@ import {
 import BuyNowDialog from "./BuyNowDialog.jsx";
 import ImageViewer from "./ImageViewer.jsx";
 import ProductReviews from "./ProductReviews.jsx";
+import Stars from "../../components/Stars.jsx";
+import { useReviews } from "../../hooks/useReviews.js";
 import "./Product.css";
 
 const MAX_QUANTITY = 99;
@@ -445,17 +447,53 @@ export default function ProductPage() {
         )}
 
         {status === "success" && (
-          <>
-            <ProductDetails key={flower.id} flower={flower} onOrdered={refresh} />
-            {/* Keyed by all its colours: switching colour keeps the same reviews, another flower loads new ones */}
-            <ProductReviews
-              key={flower.colors?.length ? flower.colors.map((c) => c.id).join(",") : flower.id}
-              flower={flower}
-            />
-          </>
+          // Keyed by all its colours: switching colour keeps the same reviews, another flower loads new ones
+          <FlowerWithReviews
+            key={reviewsKey(flower)}
+            flower={flower}
+            onOrdered={refresh}
+          />
         )}
       </div>
     </section>
+  );
+}
+
+// All colours of a flower share one set of reviews, so they are loaded by all its ids.
+const reviewsKey = (flower) =>
+  flower.colors?.length ? flower.colors.map((c) => c.id).join(",") : String(flower.id);
+
+// The flower and its reviews. The reviews are loaded once here and used twice:
+// for the rating next to the name and for the reviews section below.
+function FlowerWithReviews({ flower, onOrdered }) {
+  const reviews = useReviews(reviewsKey(flower));
+
+  return (
+    <>
+      <ProductDetails key={flower.id} flower={flower} onOrdered={onOrdered} rating={reviews} />
+      <ProductReviews flower={flower} {...reviews} />
+    </>
+  );
+}
+
+// Average rating under the flower name, e.g. ★★★★½ 4.5 · 2 reviews.
+// Only shown once the flower has reviews; clicking it scrolls down to them.
+function RatingSummary({ count, average }) {
+  if (!count) return null;
+
+  const goToReviews = (e) => {
+    e.preventDefault();
+    document.getElementById("reviews")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  return (
+    <a href="#reviews" className="product-info__rating" onClick={goToReviews}>
+      <Stars mark={average} />
+      <span className="product-info__rating-value">{average.toFixed(1)}</span>
+      <span className="product-info__rating-count">
+        {count} {count === 1 ? "review" : "reviews"}
+      </span>
+    </a>
   );
 }
 
@@ -495,7 +533,7 @@ function ColorPicker({ flower }) {
   );
 }
 
-function ProductDetails({ flower, onOrdered }) {
+function ProductDetails({ flower, onOrdered, rating }) {
   const onSale = flower.salePrice != null;
   const { about, care } = splitDetails(flower.details);
 
@@ -510,6 +548,7 @@ function ProductDetails({ flower, onOrdered }) {
           onSale && <span className="product-info__badge">Sale</span>
         )}
         <h1 className="product-info__name">{flower.name}</h1>
+        <RatingSummary count={rating.count} average={rating.average} />
 
         <p className="product-info__price">
           {onSale ? (
